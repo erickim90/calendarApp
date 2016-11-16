@@ -26,12 +26,11 @@ body{
       color:white;
 }
 .month_dates{
-    height:100px;
+    height:80px;
       color:black;
       background-color:white;
       border: 1px solid white;
       border-radius:3px;
-
 }
 
 /*Sidebar*/
