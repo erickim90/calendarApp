@@ -2,9 +2,174 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Calendar App</title>
+    <link rel="stylesheet" type="text/css" href="../styles/style.css">
 </head>
 <body>
 
+<table id="day_table">
+    <tr>
+        <th class="daily_header" colspan="8">
+            Daily View
+            <a href="../index.html"><button>Monthly</button></a>
+            <a href="weekly.html"><button>Weekly</button></a>
+        </th>
+    </tr>
+    <tr>
+        <th class="daily_day" style="width:100px;">Time</th>
+        <th class="daily_day">The Day</th>
+    </tr>
+    <tr>
+        <td class="daily_times">01:00am</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">02:00am</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">03:00am</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">04:00am</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">05:00am</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">06:00am</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">07:00am</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">08:00am</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">09:00am</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">10:00am</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">11:00am</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">12:00am</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">01:00pm</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">02:00pm</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">03:00pm</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">04:00pm</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">05:00pm</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">06:00pm</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">07:00pm</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">08:00pm</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">09:00pm</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">10:00pm</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">11:00pm</td>
+        <td class="daily_dates"></td>
+    </tr>
+    <tr>
+        <td class="daily_times">12:00pm</td>
+        <td class="daily_dates"></td>
+    </tr>
+</table>
+
+<div class="sidebar-create-event">
+
+    <h4 class="margin-0">Create new event</h4>
+
+    <div class="margin-top-20 text-center">
+        <label for="evtName">Event Name: </label>
+        <input type="text" id="evtName" placeholder="Name of Event"/>
+    </div>
+
+    <div class="margin-top-20 text-center">
+        <div class="inline-block">
+            <label for="date">Date: </label>
+            <input type="Date" id="date"/>
+        </div>
+    </div>
+
+    <div class="margin-top-20">
+        <div class="inline-block">
+            <label for="startTime">Start Time: </label>
+            <input type="time" id="startTime"/>
+        </div>
+
+        <div class="inline-block">
+            <label for="endTime">End Time: </label>
+            <input type="time" id="endTime"/>
+        </div>
+    </div>
+
+    <h4>Repeat</h4>
+    <div>
+        <input type="radio" name="repeat_value" value="None" checked>None
+        <input type="radio" name="repeat_value" value="Weekly">Weekly
+        <input type="radio" name="repeat_value" value="Monthly">Monthly
+    </div>
+
+    <div class="margin-top-20">
+        <input type="checkbox" name="repeat_days" value="sun">Sun
+        <input type="checkbox" name="repeat_days" value="mon">Mon
+        <input type="checkbox" name="repeat_days" value="tue">Tue
+        <input type="checkbox" name="repeat_days" value="">Wed
+        <input type="checkbox" name="repeat_days" value="">Thu
+        <input type="checkbox" name="repeat_days" value="">Fri
+        <input type="checkbox" name="repeat_days" value="">Sat
+    </div>
+
+    <div>
+        <h4>This event will repeat on the {date} of each month</h4>
+    </div>
+</div>
+
+<div class="sidebar-overlay hide"></div>
+<button id="slider-create-btn" class="create-event-btn">Create</button>
+
+<script type="text/javascript" src="../scripts/scripts.js"></script>
 </body>
 </html>

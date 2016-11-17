@@ -2,9 +2,324 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Calendar App</title>
+    <link rel="stylesheet" type="text/css" href="../styles/style.css">
 </head>
 <body>
 
+<table id="week_table">
+    <tr>
+        <th class="week_header" colspan="8">
+            Weekly View
+            <a href="../index.html"><button>Monthly</button></a>
+            <a href="daily.html"><button>Daily</button></a>
+        </th>
+    </tr>
+    <tr>
+        <th class="week_days" style="width:100px;">Time</th>
+        <th class="week_days">Sun</th>
+        <th class="week_days">Mon</th>
+        <th class="week_days">Tues</th>
+        <th class="week_days">Wed</th>
+        <th class="week_days">Thur</th>
+        <th class="week_days">Fri</th>
+        <th class="week_days">Sat</th>
+    </tr>
+    <tr>
+        <td class="week_times">01:00am</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">02:00am</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">03:00am</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">04:00am</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">05:00am</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">06:00am</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">07:00am</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">08:00am</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">09:00am</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">10:00am</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">11:00am</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">12:00am</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">01:00pm</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">02:00pm</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">03:00pm</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">04:00pm</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">05:00pm</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">06:00pm</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">07:00pm</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">08:00pm</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">09:00pm</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">10:00pm</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">11:00pm</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+    <tr>
+        <td class="week_times">12:00pm</td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+        <td class="week_dates"></td>
+    </tr>
+</table>
+
+<div class="sidebar-create-event">
+
+    <h4 class="margin-0">Create new event</h4>
+
+    <div class="margin-top-20 text-center">
+        <label for="evtName">Event Name: </label>
+        <input type="text" id="evtName" placeholder="Name of Event"/>
+    </div>
+
+    <div class="margin-top-20 text-center">
+        <div class="inline-block">
+            <label for="date">Date: </label>
+            <input type="Date" id="date"/>
+        </div>
+    </div>
+
+    <div class="margin-top-20">
+        <div class="inline-block">
+            <label for="startTime">Start Time: </label>
+            <input type="time" id="startTime"/>
+        </div>
+
+        <div class="inline-block">
+            <label for="endTime">End Time: </label>
+            <input type="time" id="endTime"/>
+        </div>
+    </div>
+
+    <h4>Repeat</h4>
+    <div>
+        <input type="radio" name="repeat_value" value="None" checked>None
+        <input type="radio" name="repeat_value" value="Weekly">Weekly
+        <input type="radio" name="repeat_value" value="Monthly">Monthly
+    </div>
+
+    <div class="margin-top-20">
+        <input type="checkbox" name="repeat_days" value="sun">Sun
+        <input type="checkbox" name="repeat_days" value="mon">Mon
+        <input type="checkbox" name="repeat_days" value="tue">Tue
+        <input type="checkbox" name="repeat_days" value="">Wed
+        <input type="checkbox" name="repeat_days" value="">Thu
+        <input type="checkbox" name="repeat_days" value="">Fri
+        <input type="checkbox" name="repeat_days" value="">Sat
+    </div>
+
+    <div>
+        <h4>This event will repeat on the {date} of each month</h4>
+    </div>
+</div>
+
+<div class="sidebar-overlay hide"></div>
+<button id="slider-create-btn" class="create-event-btn">Create</button>
+
+<script type="text/javascript" src="../scripts/scripts.js"></script>
 </body>
 </html>

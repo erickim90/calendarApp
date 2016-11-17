@@ -19,10 +19,7 @@ body{
     width:100%;
       background-color:rgba(0,0,255,.4);
 }
-.month_header{
-      color:white;
-}
-.month_days{
+.month_header, .month_days{
       color:white;
 }
 .month_dates{
@@ -31,6 +28,32 @@ body{
       background-color:white;
       border: 1px solid white;
       border-radius:3px;
+}
+/*weekly.html*/
+#week_table{
+    width:100%;
+    background-color:rgba(0,0,255,.4);
+}
+.week_dates{
+    color:black;
+    background-color:white;
+    border: 1px solid white;
+}
+.week_header,.week_days,.week_times{
+    color:white;
+}
+/*daily.html*/
+#day_table{
+    width:100%;
+    background-color:rgba(0,0,255,.4);
+}
+.daily_dates{
+    color:black;
+    background-color:white;
+    border: 1px solid white;
+}
+.daily_header, .daily_day, .daily_times{
+    color:white;
 }
 
 /*Sidebar*/
