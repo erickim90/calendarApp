@@ -1,9 +1,7 @@
 <!--
-TODO: Transition effects on sidebar
-TODO: Numbers at the beginning and end of calendar month
 TODO: Current Week dates in weekly view
 TODO: Current Day in Daily view
-TODO: View Event sidebar on every day of the month/week
+TODO: use data-attribute to store data
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -105,31 +103,31 @@ TODO: View Event sidebar on every day of the month/week
         </div>
 </div>
 
-<div class="sidebar-create-event">
-
+<div class="sidebar-create-event" method="POST">
+    <form id="createEventForm">
         <h4 class="margin-0">Create new event</h4>
 
         <div class="margin-top-20 text-center">
             <label for="evtName">Event Name: </label>
-            <input type="text" id="evtName" placeholder="Name of Event"/>
+            <input type="text" name="event_name" id="evtName" placeholder="Name of Event"/>
         </div>
 
         <div class="margin-top-20 text-center">
             <div class="inline-block">
                 <label for="date">Date: </label>
-                <input type="Date" id="date"/>
+                <input type="Date" name="date" id="date"/>
             </div>
         </div>
 
         <div class="margin-top-20">
             <div class="inline-block">
                 <label for="startTime">Start Time: </label>
-                <input type="time" id="startTime"/>
+                <input type="time" name="startTime" id="startTime"/>
             </div>
 
             <div class="inline-block">
                 <label for="endTime">End Time: </label>
-                <input type="time" id="endTime"/>
+                <input type="time" name="endTime" id="endTime"/>
             </div>
         </div>
 
@@ -144,22 +142,27 @@ TODO: View Event sidebar on every day of the month/week
             <input type="checkbox" name="repeat_days" value="sun">Sun
             <input type="checkbox" name="repeat_days" value="mon">Mon
             <input type="checkbox" name="repeat_days" value="tue">Tue
-            <input type="checkbox" name="repeat_days" value="">Wed
-            <input type="checkbox" name="repeat_days" value="">Thu
-            <input type="checkbox" name="repeat_days" value="">Fri
-            <input type="checkbox" name="repeat_days" value="">Sat
+            <input type="checkbox" name="repeat_days" value="wed">Wed
+            <input type="checkbox" name="repeat_days" value="thur">Thu
+            <input type="checkbox" name="repeat_days" value="fri">Fri
+            <input type="checkbox" name="repeat_days" value="sat">Sat
         </div>
 
         <div>
             <h4>This event will repeat on the {date} of each month</h4>
         </div>
+        <input type="submit" value="Submit">
+    </form>
+
 </div>
 
-<button id="slider-get-btn">GET</button>
 <div class="sidebar-overlay hide"></div>
 <button id="slider-create-btn" class="create-event-btn">Create</button>
 
-<script type="text/javascript" src="scripts/scripts.js"></script>
+<script src="scripts/scripts.js"></script>
+<script src="scripts/monthlyCalendar.js"></script>
+<script src="scripts/createEvent.js"></script>
+
 </body>
 </html>
 
