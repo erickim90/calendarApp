@@ -1,18 +1,22 @@
+<!--
+TODO: Current Week dates in weekly view
+TODO: Current Day in Daily view
+TODO: use data-attribute to store data
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Calendar App</title>
-    <link rel="stylesheet" type="text/css" href="../styles/style.css">
+    <title><%= title %></title>
+    <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
 </head>
 <body>
-
 <table id="week_table">
     <tr>
         <th class="week_header" colspan="8">
             Weekly View
-            <a href="../index.html"><button>Monthly</button></a>
-            <a href="daily.html"><button>Daily</button></a>
+            <a href="/"><button>Monthly</button></a>
+            <a href="/daily"><button>Daily</button></a>
         </th>
     </tr>
     <tr>
@@ -316,8 +320,8 @@
         <h4>This event will repeat on the {date} of each month</h4>
     </div>
 </div>
-
 <div class="sidebar-overlay hide"></div>
 <button id="slider-create-btn" class="create-event-btn">Create</button>
 </body>
 </html>
+
