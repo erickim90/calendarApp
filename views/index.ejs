@@ -102,49 +102,49 @@ TODO: use data-attribute to store data
     <p>Some event information</p>
   </div>
 </div>
-<div class="sidebar-create-event" method="POST">
+<div class="sidebar-create-event">
   <form id="createEventForm">
     <h4 class="margin-0">Create new event</h4>
 
     <div class="margin-top-20 text-center">
       <label for="evtName">Event Name: </label>
-      <input type="text" name="event_name" id="evtName" placeholder="Name of Event"/>
+      <input class="form-element" type="text" name="event_name" placeholder="Name of Event"/>
     </div>
 
     <div class="margin-top-20 text-center">
       <div class="inline-block">
         <label for="date">Date: </label>
-        <input type="Date" name="date" id="date"/>
+        <input class="form-element" type="Date" name="date"/>
       </div>
     </div>
 
     <div class="margin-top-20">
       <div class="inline-block">
         <label for="startTime">Start Time: </label>
-        <input type="time" name="startTime" id="startTime"/>
+        <input class="form-element" type="time" name="startTime"/>
       </div>
 
       <div class="inline-block">
         <label for="endTime">End Time: </label>
-        <input type="time" name="endTime" id="endTime"/>
+        <input class="form-element" type="time" name="endTime"/>
       </div>
     </div>
 
     <h4>Repeat</h4>
     <div>
-      <input type="radio" name="repeat_value" value="None" checked>None
-      <input type="radio" name="repeat_value" value="Weekly">Weekly
-      <input type="radio" name="repeat_value" value="Monthly">Monthly
+      <input class="form-element" type="radio" name="repeat_value" value="None" checked>None
+      <input class="form-element" type="radio" name="repeat_value" value="Weekly">Weekly
+      <input class="form-element" type="radio" name="repeat_value" value="Monthly">Monthly
     </div>
 
     <div class="margin-top-20">
-      <input type="checkbox" name="repeat_days" value="sun">Sun
-      <input type="checkbox" name="repeat_days" value="mon">Mon
-      <input type="checkbox" name="repeat_days" value="tue">Tue
-      <input type="checkbox" name="repeat_days" value="wed">Wed
-      <input type="checkbox" name="repeat_days" value="thur">Thu
-      <input type="checkbox" name="repeat_days" value="fri">Fri
-      <input type="checkbox" name="repeat_days" value="sat">Sat
+      <input class="form-element" type="checkbox" name="repeat_days" value="sun">Sun
+      <input class="form-element" type="checkbox" name="repeat_days" value="mon">Mon
+      <input class="form-element" type="checkbox" name="repeat_days" value="tue">Tue
+      <input class="form-element" type="checkbox" name="repeat_days" value="wed">Wed
+      <input class="form-element" type="checkbox" name="repeat_days" value="thur">Thu
+      <input class="form-element" type="checkbox" name="repeat_days" value="fri">Fri
+      <input class="form-element" type="checkbox" name="repeat_days" value="sat">Sat
     </div>
 
     <div>
@@ -157,8 +157,8 @@ TODO: use data-attribute to store data
 <div class="sidebar-overlay hide"></div>
 <button id="slider-create-btn" class="create-event-btn">Create</button>
 
-<script src="javascripts/scripts.js"></script>
 <script src="javascripts/monthlyCalendar.js"></script>
+<script src="javascripts/getEvents.js"></script>
 <script src="javascripts/createEvent.js"></script>
 
 </body>
