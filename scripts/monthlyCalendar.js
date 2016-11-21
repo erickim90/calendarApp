@@ -2,55 +2,63 @@
  * Created by Kobe on 11/17/2016.
  */
 //MONTHLY CALENDAR
-var calendar       = document.querySelectorAll('.month_dates');
-var currDate       = new Date();
-var currMonth      = currDate.getMonth(); //0 base, add a 1
-var currYear       = currDate.getUTCFullYear(); //Current Year
-var firstDay       = new Date(currYear, currMonth).getDay(); //(0-6) 0=sunday 1=monday
-var daysInMonth    = new Date(currYear, currMonth + 1, 0).getDate(); //gets first day of last month, add a +1
+function DateConstruct(){
+	this.days = ['Sun','Mon','Tues','Wed','Thur','Fri','Sat'];
+	this.currDate = new Date();
+	this.currYear  = this.currDate.getUTCFullYear();
+	this.currMonth = this.currDate.getMonth();
+	this.currDay   = this.currDate.getDate();
+	this.setYear = null;
+	this.setMonth = null;
+	this.setDay = null;
+	this.setNumOfDays = null;
+	this.setFirstDay = null;
+	this.setDate = function(year, month, day){
+		var newDate = new Date(year, month - 1, day);
+		this.setYear  = newDate.getUTCFullYear();
+		this.setMonth = newDate.getMonth();
+		this.setDay  = newDate.getDate();
+		return newDate;
+	};
+	this.numOfDays = function(year, month, offset){
+		month = offset === true ? month + 1 : month;
+		return new Date(year, month, 0).getDate();
+	};
+	this.firstDayString = function(year, month){
+		var dayNumber = new Date(year, month).getDay();
+		return this.days[dayNumber];
+	};
+	this.firstDayNumber = function(year, month){
+		return new Date(year, month).getDay();
+	};
+	this.dateFormatted = function(y,m,d){
+		return (y + '-' +
+		(m <= 9 ? "0" + m : m) + '-' +
+		(d <= 9 ? "0" + d : d));};
+}
+(function(){
+	var newDC = function(){
+		return new DateConstruct();
+	};
+	var calendar = document.querySelectorAll('.month_dates') || null;
 
-// console.log(currDate);
-// console.log(currMonth);
-// console.log(currYear);
-// console.log(firstDay);
-// console.log(daysInMonth);
+	function getCalendar(){
+		var dc = newDC();
+		calendar.forEach(function(day, index){
+			var skipDays  = dc.firstDayNumber(dc.currYear, dc.currMonth);
+			var numOfDays = dc.numOfDays(dc.currYear, dc.currMonth, true);
 
-calendar.forEach(function(day, i){
-    var index    = i + 1;
-    var skipDays = firstDay;
-    var lastDay  = daysInMonth;
-
-
-    var formatted= (currYear + '-' +
-                    (currMonth <= 9 ? "0" + currMonth : currMonth) + '-' +
-                    ((index - skipDays) <= 9 ? "0" + (index - skipDays) : (index - skipDays))
-                    );
-
-    if(index <= skipDays){
-        // console.log('skipped')
-    }
-    else if(index > lastDay + skipDays){
-        // console.log('skipped')
-    }
-    else{
-        day.dataset.date = formatted;
-        day.innerHTML = index - skipDays;
-    }
-});
-// //MONTHLY CALENDAR
-// var currDate       = new Date();
-// var currMonth      = currDate.getMonth(); //0 base
-// var currYear       = currDate.getUTCFullYear(); //0 base
-//
-// var lastMonth      = new Date(currYear,currMonth - 1); //curr month minus 1 for last month
-// var daysLastMonth  = new Date(currYear,currMonth, 0).getDate();
-// //gets the last day of last month, so currMonth is technicaly last month
-// // console.log(lastMonth,daysLastMonth);
-// var thisMonth      = new Date(currYear, currMonth); //curr month
-// var daysThisMonth  = new Date(currYear, currMonth + 1, 0).getDate();
-// //gets the last day of last month, so currMonth + 1 is technicaly this month
-// // console.log(thisMonth,daysThisMonth);
-// var nextMonth      = new Date(currYear,currMonth + 1);
-// var daysNextMonth  = new Date(currYear,currMonth + 2, 0).getDate();
-// //gets the last day of last month, so currMonth + 2 is technicaly next month
-// // console.log(nextMonth, daysNextMonth);
+			if(index <= skipDays){
+				// console.log('skipped');
+			}
+			else if(index > numOfDays + skipDays){
+				// console.log('skipped');
+			}
+			else{
+				day.dataset.date = dc.dateFormatted(dc.currYear, dc.currMonth, index - skipDays);
+				day.innerHTML = index - skipDays;
+			}
+		})
+	}
+	getCalendar();
+}());
