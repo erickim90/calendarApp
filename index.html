@@ -14,6 +14,8 @@ TODO: use data-attribute to store data
 <table id="month_table">
   <tr>
     <th class="month_header" colspan="7">
+      <button id="prevbtn">PREV</button>
+      <button id="nextbtn">NEXT</button>
       Monthly View
       <a href="views/weekly.html"><button class="ek-btn-default">Weekly</button></a>
       <a href="views/daily.html"><button class="ek-btn-default">Daily</button></a>
@@ -87,19 +89,7 @@ TODO: use data-attribute to store data
 <div class="sidebar-get-events">
   <h2 class="text-center">Right Drawer</h2>
 
-  <div>
-    <h4>{Day} {Month},{Date} : {Time xx:xx}</h4>
-    <p>Some event information</p>
-  </div>
-
-  <div>
-    <h4>{Day} {Month},{Date} : {Time xx:xx}</h4>
-    <p>Some event information</p>
-  </div>
-
-  <div>
-    <h4>{Day} {Month},{Date} : {Time xx:xx}</h4>
-    <p>Some event information</p>
+  <div class="get-event-date">
   </div>
 </div>
 <div class="sidebar-create-event">
@@ -156,6 +146,7 @@ TODO: use data-attribute to store data
 </div>
 <div class="sidebar-overlay hide"></div>
 <button id="slider-create-btn" class="create-event-btn">Create</button>
+
 
 <script src="javascripts/monthlyCalendar.js"></script>
 <script src="javascripts/getEvents.js"></script>

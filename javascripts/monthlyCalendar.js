@@ -8,20 +8,19 @@ function DateConstruct(){
 	this.currYear  = this.currDate.getUTCFullYear();
 	this.currMonth = this.currDate.getMonth();
 	this.currDay   = this.currDate.getDate();
+
 	this.setYear = null;
 	this.setMonth = null;
 	this.setDay = null;
-	this.setNumOfDays = null;
-	this.setFirstDay = null;
+
 	this.setDate = function(year, month, day){
-		var newDate = new Date(year, month - 1, day);
+		var newDate = new Date(year, month);
 		this.setYear  = newDate.getUTCFullYear();
 		this.setMonth = newDate.getMonth();
 		this.setDay  = newDate.getDate();
 		return newDate;
 	};
-	this.numOfDays = function(year, month, offset){
-		month = offset === true ? month + 1 : month;
+	this.numOfDays = function(year, month){
 		return new Date(year, month, 0).getDate();
 	};
 	this.firstDayString = function(year, month){
@@ -37,28 +36,68 @@ function DateConstruct(){
 		(d <= 9 ? "0" + d : d));};
 }
 (function(){
+	var nextMonth = document.querySelector('#nextbtn');
+	var prevMonth = document.querySelector('#prevbtn');
+	var calendar  = document.querySelectorAll('.month_dates') || null;
+	var counter   = 0;
+
 	var newDC = function(){
 		return new DateConstruct();
 	};
-	var calendar = document.querySelectorAll('.month_dates') || null;
 
-	function getCalendar(){
+	nextMonth.addEventListener('click',function(){
+		getCalendar('next');
+	});
+
+	prevMonth.addEventListener('click',function(){
+		getCalendar('prev');
+	});
+
+	function getCalendar(month){
 		var dc = newDC();
-		calendar.forEach(function(day, index){
-			var skipDays  = dc.firstDayNumber(dc.currYear, dc.currMonth);
-			var numOfDays = dc.numOfDays(dc.currYear, dc.currMonth, true);
+		var skipDays;
+		var numOfDays;
 
-			if(index <= skipDays){
+		if(month){
+			if(month === 'next'){
+				counter++;
+				dc.setDate(dc.currYear, dc.currMonth + counter)
+			}
+			else if(month === 'prev'){
+				counter--;
+				dc.setDate(dc.currYear, dc.currMonth + counter)
+			}
+			skipDays = dc.firstDayNumber(dc.setYear, dc.setMonth);
+			numOfDays = dc.numOfDays(dc.setYear, dc.setMonth);
+		}
+		else{
+			skipDays = dc.firstDayNumber(dc.currYear, dc.currMonth);
+			numOfDays = dc.numOfDays(dc.currYear, dc.currMonth);
+		}
+
+		calendar.forEach(function(day, index){
+			day.innerHTML = '';
+
+			if(index < skipDays){
 				// console.log('skipped');
 			}
-			else if(index > numOfDays + skipDays){
+			else if(index > numOfDays){
 				// console.log('skipped');
 			}
 			else{
-				day.dataset.date = dc.dateFormatted(dc.currYear, dc.currMonth, index - skipDays);
-				day.innerHTML = index - skipDays;
+				if(month){
+					day.dataset._date = dc.dateFormatted()
+				}
+				else{
+
+				}
+				day.innerHTML = index - skipDays + 1;
 			}
 		})
 	}
 	getCalendar();
+
+
+
+
 }());

@@ -97,11 +97,12 @@
 				obj[x.name] = x.value;
 			}
 		});
-		Ajax.request( "POST", "/createEvent", obj, function(data){
-			console.log("Request was Succesful ", data);
-		},function(){
-			console.log("XHR request unsuccessful");
-		});
+		console.log(obj)
+		// Ajax.request( "POST", "/createEvent", obj, function(data){
+		// 	console.log("Request was Succesful ", data);
+		// },function(){
+		// 	console.log("XHR request unsuccessful");
+		// });
 	});
 }());
 

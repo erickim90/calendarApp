@@ -5,12 +5,13 @@
 	var sidebarGet      = document.querySelector(".sidebar-get-events");
 	var sidebarOverlay  = document.querySelector(".sidebar-overlay");
 	var dayOfMonth      = document.querySelectorAll(".month_dates");
+	var sidebarDate     = document.querySelector(".get-event-date");
 
 	dayOfMonth.forEach(function(day){
-		day.addEventListener('click',function(){
+		day.addEventListener('click',function(e){
 			sidebarGet.classList.add('sidebar-show');
 			sidebarOverlay.classList.remove('hide');
-			console.log(day)
+			sidebarDate.innerHTML = e.target.dataset._date || null;
 		});
 	});
 
