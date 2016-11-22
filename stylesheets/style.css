@@ -19,7 +19,7 @@ body{
     width:100%;
       background-color:rgba(0,0,255,.4);
 }
-.month_header, .month_days{
+#month_header, .month_days{
       color:white;
 }
 .month_dates{

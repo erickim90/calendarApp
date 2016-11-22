@@ -1,8 +1,3 @@
-<!--
-TODO: Current Week dates in weekly view
-TODO: Current Day in Daily view
-TODO: use data-attribute to store data
--->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,84 +6,21 @@ TODO: use data-attribute to store data
   <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
 </head>
 <body>
+<button id="nextbtn">next</button>
+<button id="prevbtn">prev</button>
 <table id="month_table">
+  <thead id="month_header">
   <tr>
-    <th class="month_header" colspan="7">
-      <button id="prevbtn">PREV</button>
-      <button id="nextbtn">NEXT</button>
-      Monthly View
-      <a href="views/weekly.html"><button class="ek-btn-default">Weekly</button></a>
-      <a href="views/daily.html"><button class="ek-btn-default">Daily</button></a>
-    </th>
+    <th id="month_title" colspan="7"></th>
   </tr>
-  <tr>
-    <th class="month_days">Sunday</th>
-    <th class="month_days">Monday</th>
-    <th class="month_days">Tuesday</th>
-    <th class="month_days">Wednesday</th>
-    <th class="month_days">Thursday</th>
-    <th class="month_days">Friday</th>
-    <th class="month_days">Saturday</th>
-  </tr>
-  <tr>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-  </tr>
-  <tr>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-  </tr>
-  <tr>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-  </tr>
-  <tr>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-  </tr>
-  <tr>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-  </tr>
-  <tr>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-    <td class="month_dates"></td>
-  </tr>
+  <tr id="month_days"></tr>
+  </thead>
+  <tbody id="month_body">
+  </tbody>
 </table>
 
 <div class="sidebar-get-events">
   <h2 class="text-center">Right Drawer</h2>
-
   <div class="get-event-date">
   </div>
 </div>
@@ -98,25 +30,25 @@ TODO: use data-attribute to store data
 
     <div class="margin-top-20 text-center">
       <label for="evtName">Event Name: </label>
-      <input class="form-element" type="text" name="event_name" placeholder="Name of Event"/>
+      <input class="form-element" type="text" name="event_name" placeholder="Name of Event" id="evtName"/>
     </div>
 
     <div class="margin-top-20 text-center">
       <div class="inline-block">
         <label for="date">Date: </label>
-        <input class="form-element" type="Date" name="date"/>
+        <input class="form-element" type="Date" name="date"id="date"/>
       </div>
     </div>
 
     <div class="margin-top-20">
       <div class="inline-block">
         <label for="startTime">Start Time: </label>
-        <input class="form-element" type="time" name="startTime"/>
+        <input class="form-element" type="time" name="startTime" id="startTime"/>
       </div>
 
       <div class="inline-block">
         <label for="endTime">End Time: </label>
-        <input class="form-element" type="time" name="endTime"/>
+        <input class="form-element" type="time" name="endTime" id="endTime"/>
       </div>
     </div>
 
@@ -145,12 +77,10 @@ TODO: use data-attribute to store data
 
 </div>
 <div class="sidebar-overlay hide"></div>
-<button id="slider-create-btn" class="create-event-btn">Create</button>
+<button class="create-event-btn">Create</button>
 
-
-<script src="javascripts/monthlyCalendar.js"></script>
-<script src="javascripts/getEvents.js"></script>
-<script src="javascripts/createEvent.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="javascripts/scripts.js"></script>
 
 </body>
 </html>
