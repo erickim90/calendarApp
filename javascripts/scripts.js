@@ -10,8 +10,6 @@ $( document ).ready(function() {
 
 	getCalendar(null, dc.firstDayNumber(dc.currYear, dc.currMonth), dc.daysInMonth[dc.currMonth]);
 
-
-
 	nextMonth.addEventListener('click',function(){
 		getCalendar('next');
 	});
@@ -19,8 +17,6 @@ $( document ).ready(function() {
 	prevMonth.addEventListener('click',function(){
 		getCalendar('prev');
 	});
-
-
 	function DateConstruct(){
 		this.currDate = new Date();
 		this.currYear  = this.currDate.getUTCFullYear();
@@ -65,6 +61,7 @@ $( document ).ready(function() {
 		}
 	}
 	function getCalendar(month, skipDays, numOfDays){
+
 		if(month){
 			if(month === 'next'){
 				dc.currDate = new Date(dc.currYear, dc.currMonth + 1);
@@ -76,18 +73,17 @@ $( document ).ready(function() {
 			else if(month === 'prev'){
 				dc.currDate = new Date(dc.currYear, dc.currMonth - 1);
 				console.log(dc.currDate);
-				dc.currYear  = dc.currDate.getUTCFullYear();
+``				dc.currYear  = dc.currDate.getUTCFullYear();
 				dc.currMonth = dc.currDate.getMonth();
 				dc.currDay   = dc.currDate.getDate();
 			}
 			skipDays = dc.firstDayNumber(dc.currYear, dc.currMonth);
 			numOfDays = dc.daysInMonth[dc.currMonth];
 		}
-
+		$('#month_title').empty().append(dc.monthNames[dc.currMonth]);
 		$.each(calendar, function(index, day){
 
 			day.innerHTML = '';
-			console.log(numOfDays + skipDays)
 			if(numOfDays + skipDays < 36){
 				$('#extra_row').hide();
 			}
