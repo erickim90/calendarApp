@@ -28,8 +28,8 @@ $( document ).ready(function() {
 		prevMonthBtn.addEventListener('click',function(){
 		getCalendar('prev');
 	});
-	var monthDates 	 = document.querySelectorAll(".month_dates");//each day box
 	var eventDate    = document.querySelector(".event-date");//inside sidebar text
+	var monthDates 	 = document.querySelectorAll(".month_dates");//each day box
 		monthDates.forEach(function(day){
 		day.addEventListener('click',function(e){
 			var _date = e.target.dataset._date;
@@ -57,7 +57,8 @@ $( document ).ready(function() {
 		});
 	});
 
-	$(".get-events" ).on( "click", ".delete-event", function(e) {
+	var eventActions = $(".get-events" );
+	eventActions.on( "click", ".delete-event", function(e) {
 		var self = this;
 		var event_id = e.currentTarget.id;
 		$.ajax({
@@ -67,6 +68,18 @@ $( document ).ready(function() {
 			error: function(err) {console.log(err);}
 		}).done(function(){
 			$( self ).parent().remove()
+		});
+	});
+	eventActions.on( "click", ".patch-event", function(e) {
+		var event_id = e.currentTarget.id;
+		var event_date = e.currentTarget.dataset._date
+		$.ajax({
+			url : `events/${event_id}`,
+			method: 'patch',
+			success: function() {console.log('Success');},
+			error: function(err) {console.log(err);}
+		}).done(function(){
+			eventData(event_date)
 		});
 	});
 
@@ -202,11 +215,10 @@ $( document ).ready(function() {
 				dc.setdate(dc.year,dc.month - 1)
 			}
 			//set new date variables
+			m = dc.getmonth();
 			numOfDays = m[3];
 			skipDays = dc.getday()[0];
-			m = dc.getmonth();
 		}
-
 		//append name to calendar
 		monthName.empty().append(`${m[1]} ${dc.year}`);
 
@@ -265,7 +277,7 @@ $( document ).ready(function() {
 												${dc.jqformat(eventData[i].endDate)}
 											</div>
 											<button class='delete-event' id='${eventData[i]._id}'>Remove</button>
-											<button class='patch-event' id='${eventData[i]._id}'>Update</button>
+											<button class='patch-event' id='${eventData[i]._id}' data-_date='${_date}'>Update</button>
 										</div>`)
 					}
 				}

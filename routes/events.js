@@ -22,7 +22,7 @@ router.get('/', function(req, res) {
 	console.log('got here');
 	EventModel.find({},function(err,events){
 		res.send(events)
-	})
+	});
 });
 
 router.post('/', function(req, res) {
@@ -31,10 +31,11 @@ router.post('/', function(req, res) {
 			console.log(err);
 		}
 		else{
-			console.log('Yoku Dekimashita', event);
-			res.json(event);
+			console.log('Yoku Dekimashita');
+
 		}
-	})
+		res.json(event);
+	});
 });
 
 router.delete('/:_id', function(req, res) {
@@ -43,15 +44,34 @@ router.delete('/:_id', function(req, res) {
 			console.log(err);
 		}
 		else{
-			console.log('Yoku Dekimashita', event);
+			console.log('Yoku Dekimashita');
 		}
+		res.send('delete');
 	});
-	res.send('delete');
-
 });
 
-router.patch('/', function(req, res) {
-	res.send('patch')
+router.patch('/:_id', function(req, res) {
+
+	var requestBody = {
+		title: 'LOL UPDATED',
+		startDate: '2016-11-30T12:00',
+		endDate: '2016-11-30T12:00',
+		desc: 'LOL UPDATED',
+		color: 'red',
+		repeat: 'None'
+	};
+
+	EventModel.findOneAndUpdate(req.params, requestBody, function(err,event){
+		var message;
+		if(err){
+			message = {error : err}
+		}
+		else{
+			//sending copy of data before changes
+			message = {success : event}
+		}
+		res.send(message);
+	});
 });
 
 module.exports = router;
