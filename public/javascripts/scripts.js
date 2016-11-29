@@ -41,25 +41,7 @@ $( document ).ready(function() {
 		this.days = ['Sun','Mon','Tues','Wed','Thur','Fri','Sat'];
 		this.daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 	}
-	function monthlyTableCells(){
-		var days = ['Sun','Mon','Tues','Wed','Thur','Fri','Sat'];
-		for (var i = 0; i <= 5; i++){
 
-			if(i === 5){
-				$('#month_body').append("<tr id='extra_row' class='month_body_row'></tr>")
-			}
-			else{
-				$('#month_body').append("<tr class='month_body_row'></tr>")
-			}
-
-		}
-		for (var j = 0; j < 7; j++){
-			$('.month_body_row').append("<td class='month_dates'></td>")
-		}
-		for(var k = 0; k < 7; k++){
-			$('#month_days').append("<th class='month_days'>" + days[k] + "</th>")
-		}
-	}
 	function getCalendar(month, skipDays, numOfDays){
 
 		if(month){
@@ -73,7 +55,7 @@ $( document ).ready(function() {
 			else if(month === 'prev'){
 				dc.currDate = new Date(dc.currYear, dc.currMonth - 1);
 				console.log(dc.currDate);
-``				dc.currYear  = dc.currDate.getUTCFullYear();
+				dc.currYear  = dc.currDate.getUTCFullYear();
 				dc.currMonth = dc.currDate.getMonth();
 				dc.currDay   = dc.currDate.getDate();
 			}
@@ -98,6 +80,7 @@ $( document ).ready(function() {
 			}
 			else{
 				day.dataset._date = dc.dateFormatted(dc.currYear,dc.currMonth,index - skipDays + 1);
+				console.log(day.dataset._date)
 				day.innerHTML = index - skipDays + 1;
 			}
 		})

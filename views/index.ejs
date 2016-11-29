@@ -1,41 +1,37 @@
-<!--TODO implement all styles-->
-<!--TODO fix forms and dates-->
-<!--TODO setup ajax calls-->
-<!--TODO cleanup HTML/CSS/JS-->
-<!--TODO implement weekly and daily-->
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
   <title><%= title %></title>
-  <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+  <link rel='stylesheet' href='stylesheets/style.css' />
 </head>
 <body>
-<button id="nextbtn">next</button>
-<button id="prevbtn">prev</button>
-<table id="month_table">
-  <thead id="month_header">
-  <tr>
-    <th id="month_title" colspan="7"></th>
-  </tr>
-  <tr id="month_days"></tr>
-  </thead>
-  <tbody id="month_body">
-  </tbody>
-</table>
 
-<div class="sidebar-get-events">
+<div>
+  <button id="nextbtn" class="float-right">NEXT</button>
+  <button id="prevbtn" class="float-left">PREV</button>
+</div>
+
+<div>
+  <table id="month_table">
+    <thead class="month_header">
+    <tr><th id="month_name" colspan="7">THE MONTH</th></tr>
+    <tr id="month_days"></tr>
+    </thead>
+    <tbody id="month_body">
+    </tbody>
+  </table>
+</div>
+
+<div class="get-events">
   <h2 class="text-center">Right Drawer</h2>
-  <div class="get-event-date">
+  <div class="event-date">
+    <h5>Date</h5>
   </div>
-  <div class="get-events">
-
-
-
+  <div class="events">
   </div>
 </div>
-<div class="sidebar-create-event">
+<div class="create-events">
   <form id="createEventForm">
     <h4 class="margin-0">Create new event</h4>
 
@@ -71,20 +67,9 @@
         <option value="green">Green</option>
       </select>
     </div>
-    <!--<div class="margin-top-20">-->
-      <!--<div class="inline-block">-->
-        <!--<label for="startTime">Start Time: </label>-->
-        <!--<input class="form-element" type="time" name="startTime" id="startTime"/>-->
-      <!--</div>-->
 
-      <!--<div class="inline-block">-->
-        <!--<label for="endTime">End Time: </label>-->
-        <!--<input class="form-element" type="time" name="endTime" id="endTime"/>-->
-      <!--</div>-->
-    <!--</div>-->
-
-    <h4>Repeat</h4>
-    <div>
+    <h5>Repeat</h5>
+    <div class="margin-top-20">
       <input class="form-element" type="radio" name="repeat" value="None" checked>None
       <input class="form-element" type="radio" name="repeat" value="Weekly">Weekly
       <input class="form-element" type="radio" name="repeat" value="Monthly">Monthly
@@ -100,21 +85,20 @@
       <input class="form-element" type="checkbox" name="repeat_days" value="sat">Sat
     </div>
 
-    <div>
+    <div class="margin-top-20">
       <h4>This event will repeat on the {date} of each month</h4>
     </div>
-    <input type="submit" value="Submit">
+
+    <button type="submit">Submit</button>
+
   </form>
 
 </div>
-<div class="sidebar-overlay hide"></div>
-<button id="slider-create-btn" class="create-event-btn">Create</button>
+<div class="overlay hide"></div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script src="javascripts/scripts.js"></script>
-<script src="javascripts/getEvents.js"></script>
-<script src="javascripts/createEvent.js"></script>
+<button class="create-event-btn">Create</button>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+<script src="javascripts/script.js"></script>
 </body>
 </html>
-

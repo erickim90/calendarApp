@@ -13,17 +13,14 @@ $( document ).ready(function() {
 
 		$.ajax({
 			method: "GET",
-			url: "http://thiman.me:1337/eric",
-			success: function( msg ) {
+			url: "/events",
+			success: function() {
 				console.log('Success');
-				calEvents = msg;
 			},
-			error: function( msg ) {
+			error: function() {
 				console.log('Something went horribly wrong');
-				console.log(msg)
 			}
 		}).done(function() {
-				console.log(calEvents);
 			});
 
 		// events.on('click',".sidebar-remove-event", function(e){
