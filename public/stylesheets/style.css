@@ -8,6 +8,7 @@
 .float-left       {float:left;}
 .hide             {visibility: hidden;}
 body{
+    background-color: #444;
 }
 .create-event-btn{
     position: fixed;
@@ -24,7 +25,11 @@ body{
     height:80px;
     background-color:darkgrey;
     border: 3px solid darkgrey;
-    border-radius:10px;
+    border-radius:5px;
+    transition: 1s background-color;
+}
+.month_dates:hover{
+    background-color: #9b98b8;
 }
 .month_header{  color:white;  }
 
@@ -63,6 +68,42 @@ body{
     0% { opacity: 0; -moz-transform: translateX(100%); }
     100% { opacity: 1; -moz-transform: translateX(0); }
 }
+/*Navigation Bar*/
+.nav ul {
+    list-style: none;
+    background-color: #444;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
+.nav li {
+    display: inline-block;
+    width:100px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.2em;
+    line-height: 40px;
+    height: 40px;
+}
+.nav a {
+    text-decoration: none;
+    color: #fff;
+    display: block;
+    transition: 1s background-color;
+}
+.nav a:hover {
+    background-color: #005f5f;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -72,31 +113,31 @@ body{
 
 
 /*weekly.html*/
-#week_table{
-    width:100%;
-    background-color:rgba(0,0,255,.4);
-}
-.week_dates{
-    color:black;
-    background-color:white;
-    border: 1px solid white;
-}
-.week_header,.week_days,.week_times{
-    color:white;
-}
-/*daily.html*/
-#day_table{
-    width:100%;
-    background-color:rgba(0,0,255,.4);
-}
-.daily_dates{
-    color:black;
-    background-color:white;
-    border: 1px solid white;
-}
-.daily_header, .daily_day, .daily_times{
-    color:white;
-}
+/*#week_table{*/
+    /*width:100%;*/
+    /*background-color:rgba(0,0,255,.4);*/
+/*}*/
+/*.week_dates{*/
+    /*color:black;*/
+    /*background-color:white;*/
+    /*border: 1px solid white;*/
+/*}*/
+/*.week_header,.week_days,.week_times{*/
+    /*color:white;*/
+/*}*/
+/*!*daily.html*!*/
+/*#day_table{*/
+    /*width:100%;*/
+    /*background-color:rgba(0,0,255,.4);*/
+/*}*/
+/*.daily_dates{*/
+    /*color:black;*/
+    /*background-color:white;*/
+    /*border: 1px solid white;*/
+/*}*/
+/*.daily_header, .daily_day, .daily_times{*/
+    /*color:white;*/
+/*}*/
 
 
 

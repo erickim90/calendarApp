@@ -1,36 +1,71 @@
 /**
+ * Created by Kobe on 11/29/2016.
+ */
+/**
  * Created by Kobe on 11/28/2016.
  */
 $( document ).ready(function() {
 	var dc = new DateConstruct();//required
 
-	loadMonth();//load months with selectable classes and ids first
-	getCalendar();//load information into calendar
-
 	var getEvents    = document.querySelector(".get-events");
 	var createEvents = document.querySelector(".create-events");
 	var overlay      = document.querySelector(".overlay");
-		overlay.addEventListener('click',function(){
+	overlay.addEventListener('click',function(){
 		getEvents.classList.remove('sidebar-show');
 		createEvents.classList.remove('sidebar-show');
 		overlay.classList.add('hide');
 	});
 	var createBtn    = document.querySelector(".create-event-btn");
-		createBtn.addEventListener('click', function(){
+	createBtn.addEventListener('click', function(){
 		createEvents.classList.add('sidebar-show');
 		overlay.classList.remove('hide');
 	});
 	var nextMonthBtn = document.querySelector('#nextbtn');
-		nextMonthBtn.addEventListener('click',function(){
-		getCalendar('next');
+	nextMonthBtn.addEventListener('click',function(){
+		// getCalendar('next');
 	});
 	var prevMonthBtn = document.querySelector('#prevbtn');
-		prevMonthBtn.addEventListener('click',function(){
-		getCalendar('prev');
+	prevMonthBtn.addEventListener('click',function(){
+		// getCalendar('prev');
 	});
+
+	function loadWeek(){
+		for (var i = 0; i <= 5; i++){
+			if(i === 5){
+				$('#week_body').append(
+					"<tr id='extra_row' class='month_body_row'></tr>"
+				)
+			}
+			else{
+				$('#week_body').append(
+					"<tr class='month_body_row'></tr>"
+				)
+			}
+		}
+		for (d in dc.days){
+			$('#week_days').append(
+				`<td class="text-center"> ${dc.days[d][1]} </td>`
+			)
+		}
+		for (var j = 0; j < 7; j++){
+			$('.month_body_row').append(
+				"<td class='month_dates'></td>"
+			)
+		}
+	}
+	loadWeek();
+
+
+
+
+
+
+
+	// loadMonth();//load months with selectable classes and ids first
+	// getCalendar();//load information into calendar
 	var monthDates 	 = document.querySelectorAll(".month_dates");//each day box
 	var eventDate    = document.querySelector(".event-date");//inside sidebar text
-		monthDates.forEach(function(day){
+	monthDates.forEach(function(day){
 		day.addEventListener('click',function(e){
 			var _date = e.target.dataset._date;
 			getEvents.classList.add('sidebar-show');
@@ -40,7 +75,7 @@ $( document ).ready(function() {
 		});
 	});
 	var createEvent  = $('#createEventForm');
-		createEvent.submit(function(event){
+	createEvent.submit(function(event){
 		event.preventDefault(); //prevent default action
 		var post_url = $(this).attr("action"); //get form action url
 		var request_method = $(this).attr("method"); //get form GET/POST method
@@ -148,7 +183,7 @@ $( document ).ready(function() {
 		this.jqformat = function(date){
 
 			var d = new Date(date);
-				return ("00" + (d.getMonth() + 1)).slice(-2) + "/" +
+			return ("00" + (d.getMonth() + 1)).slice(-2) + "/" +
 				("00" + d.getDate()).slice(-2) + "/" +
 				d.getFullYear() + " " +
 				("00" + d.getHours()).slice(-2) + ":" +
@@ -157,30 +192,7 @@ $( document ).ready(function() {
 		};
 	}
 	//append calendar days dynamically and add classes, SHOULD RUN FIRST!!!
-	function loadMonth(){
-		for (var i = 0; i <= 5; i++){
-			if(i === 5){
-				$('#month_body').append(
-					"<tr id='extra_row' class='month_body_row'></tr>"
-				)
-			}
-			else{
-				$('#month_body').append(
-					"<tr class='month_body_row'></tr>"
-				)
-			}
-		}
-		for (d in dc.days){
-			$('#month_days').append(
-				`<td class="text-center"> ${dc.days[d][1]} </td>`
-			)
-		}
-		for (var j = 0; j < 7; j++){
-			$('.month_body_row').append(
-				"<td class='month_dates'></td>"
-			)
-		}
-	}
+
 	//bind appropriate days to the set month
 	function getCalendar(month){
 
@@ -248,7 +260,7 @@ $( document ).ready(function() {
 			if(eventData){
 				for (var i = 0; i < eventData.length; i++){
 					//see if passed in date are equal to any of the DBs event dates
-								//format mongo date into yyyy-mm-dd
+					//format mongo date into yyyy-mm-dd
 					if(_date == dc.yyyymmdd(eventData[i].startDate)) {
 						//append to sidebar
 						events.append(`<div class='event'>
@@ -265,7 +277,6 @@ $( document ).ready(function() {
 												${dc.jqformat(eventData[i].endDate)}
 											</div>
 											<button class='delete-event' id='${eventData[i]._id}'>Remove</button>
-											<button class='patch-event' id='${eventData[i]._id}'>Update</button>
 										</div>`)
 					}
 				}

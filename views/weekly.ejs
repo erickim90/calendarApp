@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title><%= title %></title>
+    <link rel='stylesheet' href='stylesheets/style.css' />
+</head>
+<body>
+
+<div class="nav">
+    <ul>
+        <li id="prevbtn" class="Prev float-left"><a href="#">Prev</a></li>
+        <li class="Monthly"><a href="#">Monthly</a></li>
+        <li class="Weekly"><a href="#">Weekly</a></li>
+        <li class="Daily"><a href="#">Daily</a></li>
+        <li id="nextbtn" class="Next float-right"><a href="#">Next</a></li>
+    </ul>
+</div>
+
+<div>
+    <table id="week_table">
+        <thead class="week_header">
+        <tr><th id="week_name" colspan="8">THE WEAK/th></tr>
+        <tr id="week_days"></tr>
+        </thead>
+        <tbody id="week_body">
+        </tbody>
+    </table>
+</div>
+
+<div class="get-events">
+    <h2 class="text-center">Right Drawer</h2>
+    <div class="event-date">
+        <h5>Date</h5>
+    </div>
+    <div class="events">
+    </div>
+</div>
+<div class="create-events">
+    <form id="createEventForm" method="post" action="/events">
+        <h4 class="margin-0">Create new event</h4>
+
+        <div class="margin-top-20 text-center">
+            <label for="evtName">Event Name: </label>
+            <input class="form-element" type="text" name="title" placeholder="Name of Event" id="evtName" value="Event Name"/>
+        </div>
+
+        <div class="margin-top-20 text-center">
+            <div class="inline-block">
+                <label for="startDate">Start Time: </label>
+                <input class="form-element" type="datetime-local" name="startDate" id="startDate" value="2016-11-01T12:00"/>
+            </div>
+        </div>
+
+        <div class="margin-top-20 text-center">
+            <div class="inline-block">
+                <label for="endDate">End Time: </label>
+                <input class="form-element" type="datetime-local" name="endDate" id="endDate" value="2016-11-01T12:00"/>
+            </div>
+        </div>
+
+        <div class="margin-top-20 text-center">
+            <label for="description">Description: </label>
+            <textarea class="form-element" name="desc" placeholder="Description of event" id="description"></textarea>
+        </div>
+
+        <div class="margin-top-20 text-center">
+            <label for="color">Description: </label>
+            <select class="form-element" name="color" id="color">
+                <option value="red">Red</option>
+                <option value="blue">Blue</option>
+                <option value="green">Green</option>
+            </select>
+        </div>
+
+        <h5>Repeat</h5>
+        <div class="margin-top-20">
+            <input class="form-element" type="radio" name="repeat" value="None" checked>None
+            <input class="form-element" type="radio" name="repeat" value="Weekly">Weekly
+            <input class="form-element" type="radio" name="repeat" value="Monthly">Monthly
+        </div>
+
+        <div class="margin-top-20">
+            <input class="form-element" type="checkbox" name="repeat_days" value="sun">Sun
+            <input class="form-element" type="checkbox" name="repeat_days" value="mon">Mon
+            <input class="form-element" type="checkbox" name="repeat_days" value="tue">Tue
+            <input class="form-element" type="checkbox" name="repeat_days" value="wed">Wed
+            <input class="form-element" type="checkbox" name="repeat_days" value="thur">Thu
+            <input class="form-element" type="checkbox" name="repeat_days" value="fri">Fri
+            <input class="form-element" type="checkbox" name="repeat_days" value="sat">Sat
+        </div>
+
+        <div class="margin-top-20">
+            <h4>This event will repeat on the {date} of each month</h4>
+        </div>
+
+        <button type="submit">Submit</button>
+
+    </form>
+
+</div>
+<div class="overlay hide"></div>
+
+<button class="create-event-btn">Create</button>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+<script src="javascripts/weeklyScript.js"></script>
+</body>
+</html>
