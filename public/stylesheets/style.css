@@ -23,8 +23,10 @@ body{
 }
 .month_dates{
     height:80px;
-    background-color:darkgrey;
-    border: 3px solid darkgrey;
+    color:white;
+    vertical-align: top;
+    background-color:grey;
+    border: 3px solid grey;
     border-radius:5px;
     transition: 1s background-color;
 }

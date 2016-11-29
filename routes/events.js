@@ -19,38 +19,46 @@ var debug = EventModel.find;
 
 /* Events */
 router.get('/', function(req, res) {
-	console.log('got here');
+	var output = {
+		status: 200
+	};
+
 	EventModel.find({},function(err,events){
-		res.send(events)
+		if(err){
+			output.status = 500;
+			output.error = err;
+			res.status(output.status).json(output);
+		}
+		else{
+			output.data = events;
+			res.status(output.status).json(output)
+		}
 	});
 });
 
 router.post('/', function(req, res) {
+	var output = {
+		status: 200
+	};
+
 	EventModel.create(req.body,function(err, event){
 		if(err){
-			console.log(err);
+			output.status = 500;
+			output.error = err;
+			res.status(output.status).json(output);
 		}
-		else{
-			console.log('Yoku Dekimashita');
-
+		else {
+			output.status = 201;
+			output.data = event;
+			res.status(output.status).json(output)
 		}
-		res.json(event);
-	});
-});
-
-router.delete('/:_id', function(req, res) {
-	EventModel.findOneAndRemove(req.params, function(err,event){
-		if(err){
-			console.log(err);
-		}
-		else{
-			console.log('Yoku Dekimashita');
-		}
-		res.send('delete');
 	});
 });
 
 router.patch('/:_id', function(req, res) {
+	var output = {
+		status: 200
+	};
 
 	var requestBody = {
 		title: 'LOL UPDATED',
@@ -62,16 +70,38 @@ router.patch('/:_id', function(req, res) {
 	};
 
 	EventModel.findOneAndUpdate(req.params, requestBody, function(err,event){
-		var message;
 		if(err){
-			message = {error : err}
+			output.status = 500;
+			output.error = err;
+			res.status(output.status).json(output);
 		}
-		else{
-			//sending copy of data before changes
-			message = {success : event}
+		else {
+			output.status = 202;
+			output.data = event;
+			res.status(output.status).json(output)
 		}
-		res.send(message);
 	});
 });
+
+router.delete('/:_id', function(req, res) {
+	var output = {
+		status: 200
+	};
+
+	EventModel.findOneAndRemove(req.params, function(err,event){
+		if(err){
+			output.status = 500;
+			output.error = err;
+			res.status(output.status).json(output);
+		}
+		else {
+			output.status = 202;
+			output.data = event;
+			res.status(output.status).json(output)
+		}
+	});
+});
+
+
 
 module.exports = router;

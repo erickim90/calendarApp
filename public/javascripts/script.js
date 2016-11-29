@@ -10,27 +10,27 @@ $( document ).ready(function() {
 	var getEvents    = document.querySelector(".get-events");
 	var createEvents = document.querySelector(".create-events");
 	var overlay      = document.querySelector(".overlay");
-		overlay.addEventListener('click',function(){
+	overlay.addEventListener('click',function(){
 		getEvents.classList.remove('sidebar-show');
 		createEvents.classList.remove('sidebar-show');
 		overlay.classList.add('hide');
 	});
 	var createBtn    = document.querySelector(".create-event-btn");
-		createBtn.addEventListener('click', function(){
+	createBtn.addEventListener('click', function(){
 		createEvents.classList.add('sidebar-show');
 		overlay.classList.remove('hide');
 	});
 	var nextMonthBtn = document.querySelector('#nextbtn');
-		nextMonthBtn.addEventListener('click',function(){
+	nextMonthBtn.addEventListener('click',function(){
 		getCalendar('next');
 	});
 	var prevMonthBtn = document.querySelector('#prevbtn');
-		prevMonthBtn.addEventListener('click',function(){
+	prevMonthBtn.addEventListener('click',function(){
 		getCalendar('prev');
 	});
 	var eventDate    = document.querySelector(".event-date");//inside sidebar text
 	var monthDates 	 = document.querySelectorAll(".month_dates");//each day box
-		monthDates.forEach(function(day){
+	monthDates.forEach(function(day){
 		day.addEventListener('click',function(e){
 			var _date = e.target.dataset._date;
 			getEvents.classList.add('sidebar-show');
@@ -39,48 +39,130 @@ $( document ).ready(function() {
 			eventData(_date)
 		});
 	});
+
 	var createEvent  = $('#createEventForm');
-		createEvent.submit(function(event){
+	var eventActions = $(".get-events" );
+
+	//TODO mark days on the calendar with colors if they have events
+	// $.ajax({//GET
+	// 	method: "GET",
+	// 	url: "/events",
+	// 	success: function() {console.log('Success');},
+	// }).done(function(events) {
+	// 	// console.log(events)
+	// 	events.data.forEach(function(event){
+	// 		console.log(event)
+	// 		if()
+	// 	})
+	// });
+
+	createEvent.submit(function(event){
 		event.preventDefault(); //prevent default action
 		var post_url = $(this).attr("action"); //get form action url
 		var request_method = $(this).attr("method"); //get form GET/POST method
 		var form_data = $(this).serialize(); //Encode form elements for submission
-
-		$.ajax({
+		// var form_data = {"title": "herpderp",  _id:"583debef0aedb4039849cd4c"};//ERROR THROWING FORM DATA
+		$.ajax({//CREATE
 			url : post_url,
 			method: request_method,
-			data : form_data,
-			success: function() {console.log('Success');},
-			error: function(err) {console.log(err);}
-		}).done(function(response){ //
-			console.log(response)
-		});
+			data : form_data
+		}).done(function(res){
+			console.log(res)
+		}).fail(function(xhr){
+			var res = JSON.parse(xhr.responseText);
+			alert(res.error.message || res.error.errmsg)
+		})
 	});
-
-	var eventActions = $(".get-events" );
 	eventActions.on( "click", ".delete-event", function(e) {
 		var self = this;
 		var event_id = e.currentTarget.id;
-		$.ajax({
-			url : `events/${event_id}`,
-			method: 'delete',
-			success: function() {console.log('Success');},
-			error: function(err) {console.log(err);}
-		}).done(function(){
+		$.ajax({//DELETE
+				url : `events/${event_id}`,
+				method: 'delete'
+		}).done(function(res){
+			console.log(res)
 			$( self ).parent().remove()
-		});
+		}).fail(function(xhr){
+			var res = JSON.parse(xhr.responseText);
+			alert(res.error.message || res.error.errmsg)
+		})
 	});
 	eventActions.on( "click", ".patch-event", function(e) {
 		var event_id = e.currentTarget.id;
-		var event_date = e.currentTarget.dataset._date
-		$.ajax({
+		var event_date = e.currentTarget.dataset._date;
+
+		//spawn a modal
+		$(this).parent().append(`<form>
+    <h4 class="margin-0">Create new event</h4>
+
+    <div class="margin-top-20 text-center">
+      <label for="evtName">Event Name: </label>
+      <input class="form-element" type="text" name="title" placeholder="Name of Event" id="evtName" value="Event Name"/>
+    </div>
+
+    <div class="margin-top-20 text-center">
+      <div class="inline-block">
+        <label for="startDate">Start Time: </label>
+        <input class="form-element" type="datetime-local" name="startDate" id="startDate" value="2016-11-01T12:00"/>
+      </div>
+    </div>
+
+    <div class="margin-top-20 text-center">
+      <div class="inline-block">
+        <label for="endDate">End Time: </label>
+        <input class="form-element" type="datetime-local" name="endDate" id="endDate" value="2016-11-01T12:00"/>
+      </div>
+    </div>
+
+    <div class="margin-top-20 text-center">
+      <label for="description">Description: </label>
+      <textarea class="form-element" name="desc" placeholder="Description of event" id="description"></textarea>
+    </div>
+
+    <div class="margin-top-20 text-center">
+      <label for="color">Description: </label>
+      <select class="form-element" name="color" id="color">
+        <option value="red">Red</option>
+        <option value="blue">Blue</option>
+        <option value="green">Green</option>
+      </select>
+    </div>
+
+    <h5>Repeat</h5>
+    <div class="margin-top-20">
+      <input class="form-element" type="radio" name="repeat" value="None" checked>None
+      <input class="form-element" type="radio" name="repeat" value="Weekly">Weekly
+      <input class="form-element" type="radio" name="repeat" value="Monthly">Monthly
+    </div>
+
+    <div class="margin-top-20">
+      <input class="form-element" type="checkbox" name="repeat_days" value="sun">Sun
+      <input class="form-element" type="checkbox" name="repeat_days" value="mon">Mon
+      <input class="form-element" type="checkbox" name="repeat_days" value="tue">Tue
+      <input class="form-element" type="checkbox" name="repeat_days" value="wed">Wed
+      <input class="form-element" type="checkbox" name="repeat_days" value="thur">Thu
+      <input class="form-element" type="checkbox" name="repeat_days" value="fri">Fri
+      <input class="form-element" type="checkbox" name="repeat_days" value="sat">Sat
+    </div>
+
+    <div class="margin-top-20">
+      <h4>This event will repeat on the {date} of each month</h4>
+    </div>
+
+    <button type="submit">Submit</button>
+
+  </form>`);
+
+		$.ajax({//UPDATE
 			url : `events/${event_id}`,
-			method: 'patch',
-			success: function() {console.log('Success');},
-			error: function(err) {console.log(err);}
-		}).done(function(){
+			method: 'patch'
+		}).done(function(res){
+			console.log(res)
 			eventData(event_date)
-		});
+		}).fail(function(xhr){
+			var res = JSON.parse(xhr.responseText);
+			alert(res.error.message || res.error.errmsg)
+		})
 	});
 
 	//dc is a date formatting and constructing object that stores dates
@@ -161,7 +243,7 @@ $( document ).ready(function() {
 		this.jqformat = function(date){
 
 			var d = new Date(date);
-				return ("00" + (d.getMonth() + 1)).slice(-2) + "/" +
+			return ("00" + (d.getMonth() + 1)).slice(-2) + "/" +
 				("00" + d.getDate()).slice(-2) + "/" +
 				d.getFullYear() + " " +
 				("00" + d.getHours()).slice(-2) + ":" +
@@ -246,43 +328,48 @@ $( document ).ready(function() {
 	}
 	//monthdates.forEach Callback, passed in a date string "1990-12-24"
 	function eventData(_date){
-		var events       = $(".events");
-		var eventData = [];
+		var events = $(".events");
 		events.empty();
-		//get all events
-		$.ajax({
+		//get events and load to sidebar
+		$.ajax({//GET
 			method: "GET",
 			url: "/events",
 			success: function() {console.log('Success');},
-			error: function(err) {console.log(err);}
-		}).done(function(eventData) {
-			//if events exist in DB
-			if(eventData){
-				for (var i = 0; i < eventData.length; i++){
+		}).done(function(event) {
+			if(event.data){
+				for (var i = 0; i < event.data.length; i++){
 					//see if passed in date are equal to any of the DBs event dates
-								//format mongo date into yyyy-mm-dd
-					if(_date == dc.yyyymmdd(eventData[i].startDate)) {
+					//format mongo date into yyyy-mm-dd
+					if(_date == dc.yyyymmdd(event.data[i].startDate)) {
 						//append to sidebar
 						events.append(`<div class='event'>
-											<div class='event-name'>
-												${eventData[i].title}
+											<div class="editable"  
+											data-title="${event.data[i].title}"
+											data-desc="${event.data[i].desc}"
+											data-startDate="${event.data[i].startDate}"
+											data-EndDate="${event.data[i].endDate}">
+												<div class='event-name'>
+													${event.data[i].title}
+												</div>
+												<div class='event-desc'>
+													${event.data[i].desc}
+												</div>
+												<div class='event-name'">
+													${dc.jqformat(event.data[i].startDate)}
+												</div>
+												<div class='event-name' data-endDate="${event.data[i].endDate}">
+													${dc.jqformat(event.data[i].endDate)}
+												</div>
 											</div>
-											<div class='event-desc'>
-												${eventData[i].desc}
-											</div>
-											<div class='event-name'>
-												${dc.jqformat(eventData[i].startDate)}
-											</div>
-											<div class='event-name'>
-												${dc.jqformat(eventData[i].endDate)}
-											</div>
-											<button class='delete-event' id='${eventData[i]._id}'>Remove</button>
-											<button class='patch-event' id='${eventData[i]._id}' data-_date='${_date}'>Update</button>
+											<button class='delete-event' id='${event.data[i]._id}'>Remove</button>
+											<button class='patch-event' id='${event.data[i]._id}' data-_date='${_date}'>Update</button>
 										</div>`)
 					}
 				}
 			}
-		});
+		}).fail(function(xhr){
+			var res = JSON.parse(xhr.responseText);
+			alert(res.error.message || res.error.errmsg)
+		})
 	}
-
 });
