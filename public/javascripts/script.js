@@ -39,6 +39,36 @@ $( document ).ready(function() {
 			eventData(_date)
 		});
 	});
+	var createEvent  = $('#createEventForm');
+		createEvent.submit(function(event){
+		event.preventDefault(); //prevent default action
+		var post_url = $(this).attr("action"); //get form action url
+		var request_method = $(this).attr("method"); //get form GET/POST method
+		var form_data = $(this).serialize(); //Encode form elements for submission
+
+		$.ajax({
+			url : post_url,
+			method: request_method,
+			data : form_data,
+			success: function() {console.log('Success');},
+			error: function(err) {console.log(err);}
+		}).done(function(response){ //
+			console.log(response)
+		});
+	});
+
+	$(".get-events" ).on( "click", ".delete-event", function(e) {
+		var self = this;
+		var event_id = e.currentTarget.id;
+		$.ajax({
+			url : `events/${event_id}`,
+			method: 'delete',
+			success: function() {console.log('Success');},
+			error: function(err) {console.log(err);}
+		}).done(function(){
+			$( self ).parent().remove()
+		});
+	});
 
 	function DateConstruct(){
 		var d = ['sun','mon','tue','wed','thu','fri','sat'];
@@ -213,7 +243,7 @@ $( document ).ready(function() {
 											<div class='event-name'>
 												${eventData[i].title}
 											</div>
-											<div class='event-name'>
+											<div class='event-desc'>
 												${eventData[i].desc}
 											</div>
 											<div class='event-name'>
@@ -222,11 +252,12 @@ $( document ).ready(function() {
 											<div class='event-name'>
 												${dc.jqformat(eventData[i].endDate)}
 											</div>
-											<button class='remove-event' id='${eventData[i]._id}'>Remove</button>
+											<button class='delete-event' id='${eventData[i]._id}'>Remove</button>
 										</div>`)
 					}
 				}
 			}
 		});
 	}
+
 });

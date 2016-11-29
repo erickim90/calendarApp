@@ -30,6 +30,7 @@ body{
 
 /*Sidebar*/
 .get-events,.create-events{
+    overflow-y: scroll;
     position: fixed;
     right:0;
     top: 0;
