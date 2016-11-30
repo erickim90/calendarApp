@@ -1,67 +1,29 @@
-/**
- * Created by Kobe on 11/28/2016.
- */
-$( document ).ready(function() {
+$(document).ready(function(){
+	//Required on all pages
 	var dc = new DateConstruct();//required
-
-	loadMonth();//load months with selectable classes and ids first
-	getCalendar();//load information into calendar
-
 	var getEvents    = document.querySelector(".get-events");
 	var createEvents = document.querySelector(".create-events");
 	var overlay      = document.querySelector(".overlay");
+	var createBtn    = document.querySelector(".create-event-btn");
+
+	patchDeleteEvents();
 	overlay.addEventListener('click',function(){
 		getEvents.classList.remove('sidebar-show');
 		createEvents.classList.remove('sidebar-show');
 		overlay.classList.add('hide');
 	});
-	var createBtn    = document.querySelector(".create-event-btn");
 	createBtn.addEventListener('click', function(){
 		createEvents.classList.add('sidebar-show');
 		overlay.classList.remove('hide');
 	});
-	var nextMonthBtn = document.querySelector('#nextbtn');
-	nextMonthBtn.addEventListener('click',function(){
-		getCalendar('next');
-	});
-	var prevMonthBtn = document.querySelector('#prevbtn');
-	prevMonthBtn.addEventListener('click',function(){
-		getCalendar('prev');
-	});
-	var eventDate    = document.querySelector(".event-date");//inside sidebar text
-	var monthDates 	 = document.querySelectorAll(".month_dates");//each day box
-	monthDates.forEach(function(day){
-		day.addEventListener('click',function(e){
-			var _date = e.target.dataset._date;
-			getEvents.classList.add('sidebar-show');
-			overlay.classList.remove('hide');
-			eventDate.innerHTML = _date;
-			eventData(_date)
-		});
-	});
-
-	var createEvent  = $('#createEventForm');
-	var eventActions = $(".get-events" );
-
-	//TODO mark days on the calendar with colors if they have events
-	// $.ajax({//GET
-	// 	method: "GET",
-	// 	url: "/events",
-	// 	success: function() {console.log('Success');},
-	// }).done(function(events) {
-	// 	// console.log(events)
-	// 	events.data.forEach(function(event){
-	// 		console.log(event)
-	// 		if()
-	// 	})
-	// });
-
-	createEvent.submit(function(event){
+	$('#createEventForm').submit(function(event){
 		event.preventDefault(); //prevent default action
-		var post_url = $(this).attr("action"); //get form action url
+
+		var post_url       = $(this).attr("action"); //get form action url
 		var request_method = $(this).attr("method"); //get form GET/POST method
-		var form_data = $(this).serialize(); //Encode form elements for submission
+		var form_data      = $(this).serialize(); //Encode form elements for submission
 		// var form_data = {"title": "herpderp",  _id:"583debef0aedb4039849cd4c"};//ERROR THROWING FORM DATA
+
 		$.ajax({//CREATE
 			url : post_url,
 			method: request_method,
@@ -73,99 +35,113 @@ $( document ).ready(function() {
 			alert(res.error.message || res.error.errmsg)
 		})
 	});
-	eventActions.on( "click", ".delete-event", function(e) {
-		var self = this;
-		var event_id = e.currentTarget.id;
-		$.ajax({//DELETE
+	function patchDeleteEvents(){
+		var eventActions = $(".get-events" );
+		eventActions.on( "click", ".delete-event", function(e) {
+			var self = this;
+			var event_id = e.currentTarget.id;
+			$.ajax({//DELETE
 				url : `events/${event_id}`,
 				method: 'delete'
-		}).done(function(res){
-			console.log(res)
-			$( self ).parent().remove()
-		}).fail(function(xhr){
-			var res = JSON.parse(xhr.responseText);
-			alert(res.error.message || res.error.errmsg)
-		})
-	});
-	eventActions.on( "click", ".patch-event", function(e) {
-		var event_id = e.currentTarget.id;
-		var event_date = e.currentTarget.dataset._date;
+			}).done(function(res){
+				console.log(res)
+				$( self ).parent().remove()
+			}).fail(function(xhr){
+				var res = JSON.parse(xhr.responseText);
+				alert(res.error.message || res.error.errmsg)
+			})
+		});
+		eventActions.on( "click", ".patch-event", function(e) {
+			var event_id = e.currentTarget.id;
+			var event_date = e.currentTarget.dataset._date;
+			var title = e.currentTarget.dataset.title;
+			var startDate = e.currentTarget.dataset.startdate;
+			var endDate = e.currentTarget.dataset.enddate;
+			var desc = e.currentTarget.dataset.desc;
+			$(this).parent().empty().append(`<form id="edit-form" method="patch" action="/events/${event_id}">
+    		<h4 class="margin-0">Edit Event</h4>
 
-		//spawn a modal
-		$(this).parent().append(`<form>
-    <h4 class="margin-0">Create new event</h4>
+    		<div class="margin-top-20 text-center">
+    		  <label for="evtName">Event Name: </label>
+    		  <input class="form-element" type="text" name="title" placeholder="Name of Event" id="evtName" value="${title}"/>
+    		</div>
 
-    <div class="margin-top-20 text-center">
-      <label for="evtName">Event Name: </label>
-      <input class="form-element" type="text" name="title" placeholder="Name of Event" id="evtName" value="Event Name"/>
-    </div>
+    		<div class="margin-top-20 text-center">
+    		  <div class="inline-block">
+    		    <label for="startDate">Start Time: </label>
+    		    <input class="form-element" type="datetime-local" name="startDate" id="startDate" value="${startDate.slice(0, -1)}"/>
+    		  </div>
+    		</div>
 
-    <div class="margin-top-20 text-center">
-      <div class="inline-block">
-        <label for="startDate">Start Time: </label>
-        <input class="form-element" type="datetime-local" name="startDate" id="startDate" value="2016-11-01T12:00"/>
-      </div>
-    </div>
+    		<div class="margin-top-20 text-center">
+    		  <div class="inline-block">
+    		    <label for="endDate">End Time: </label>
+    		    <input class="form-element" type="datetime-local" name="endDate" id="endDate" value="${endDate.slice(0, -1)}"/>
+    		  </div>
+    		</div>
+    		<div class="margin-top-20 text-center">
+    		  <label for="description">Description: </label>
+    		  <textarea class="form-element" name="desc" placeholder="Description of event" id="description">${desc}</textarea>
+    		</div>
 
-    <div class="margin-top-20 text-center">
-      <div class="inline-block">
-        <label for="endDate">End Time: </label>
-        <input class="form-element" type="datetime-local" name="endDate" id="endDate" value="2016-11-01T12:00"/>
-      </div>
-    </div>
+    		<!--<div class="margin-top-20 text-center">-->
+    		  <!--<label for="color">Color: </label>-->
+    		  <!--<select class="form-element" name="color" id="color">-->
+    		    <!--<option value="red">Red</option>-->
+    		    <!--<option value="blue">Blue</option>-->
+    		    <!--<option value="green">Green</option>-->
+    		  <!--</select>-->
+   			<!--</div>-->
 
-    <div class="margin-top-20 text-center">
-      <label for="description">Description: </label>
-      <textarea class="form-element" name="desc" placeholder="Description of event" id="description"></textarea>
-    </div>
+		    <!--<h5>Repeat</h5>-->
+		    <!--<div class="margin-top-20">-->
+		      <!--<input class="form-element" type="radio" name="repeat" value="None" checked>None-->
+		      <!--<input class="form-element" type="radio" name="repeat" value="Weekly">Weekly-->
+		      <!--<input class="form-element" type="radio" name="repeat" value="Monthly">Monthly-->
+		    <!--</div>-->
 
-    <div class="margin-top-20 text-center">
-      <label for="color">Description: </label>
-      <select class="form-element" name="color" id="color">
-        <option value="red">Red</option>
-        <option value="blue">Blue</option>
-        <option value="green">Green</option>
-      </select>
-    </div>
+		    <!--<div class="margin-top-20">-->
+		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="sun">Sun-->
+		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="mon">Mon-->
+		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="tue">Tue-->
+		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="wed">Wed-->
+		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="thur">Thu-->
+		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="fri">Fri-->
+		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="sat">Sat-->
+		    <!--</div>-->
+			<!---->
+		    <!--<div class="margin-top-20">-->
+		      <!--<h4>This event will repeat on the {date} of each month</h4>-->
+		    <!--</div>-->
+		
+		    <button type="submit">Submit</button>
 
-    <h5>Repeat</h5>
-    <div class="margin-top-20">
-      <input class="form-element" type="radio" name="repeat" value="None" checked>None
-      <input class="form-element" type="radio" name="repeat" value="Weekly">Weekly
-      <input class="form-element" type="radio" name="repeat" value="Monthly">Monthly
-    </div>
+  		</form>`);
+			//spawn a modal
+			$('#edit-form').submit(function(event){
+				event.preventDefault(); //prevent default action
 
-    <div class="margin-top-20">
-      <input class="form-element" type="checkbox" name="repeat_days" value="sun">Sun
-      <input class="form-element" type="checkbox" name="repeat_days" value="mon">Mon
-      <input class="form-element" type="checkbox" name="repeat_days" value="tue">Tue
-      <input class="form-element" type="checkbox" name="repeat_days" value="wed">Wed
-      <input class="form-element" type="checkbox" name="repeat_days" value="thur">Thu
-      <input class="form-element" type="checkbox" name="repeat_days" value="fri">Fri
-      <input class="form-element" type="checkbox" name="repeat_days" value="sat">Sat
-    </div>
+				var post_url       = $(this).attr("action"); //get form action url
+				var request_method = $(this).attr("method"); //get form GET/POST method
+				var form_data      = $(this).serialize(); //Encode form elements for submission
+				// var form_data = {"title": "herpderp",  _id:"583debef0aedb4039849cd4c"};//ERROR THROWING FORM DATA
 
-    <div class="margin-top-20">
-      <h4>This event will repeat on the {date} of each month</h4>
-    </div>
+				$.ajax({//CREATE
+					url : post_url,
+					method: request_method,
+					data : form_data
+				}).done(function(res){
+					console.log(res);
+					eventData(event_date);
+				}).fail(function(xhr){
+					var res = JSON.parse(xhr.responseText);
+					alert(res.error.message || res.error.errmsg)
+				})
+			})
 
-    <button type="submit">Submit</button>
 
-  </form>`);
-
-		$.ajax({//UPDATE
-			url : `events/${event_id}`,
-			method: 'patch'
-		}).done(function(res){
-			console.log(res)
-			eventData(event_date)
-		}).fail(function(xhr){
-			var res = JSON.parse(xhr.responseText);
-			alert(res.error.message || res.error.errmsg)
-		})
-	});
-
-	//dc is a date formatting and constructing object that stores dates
+		});
+	}
 	function DateConstruct(){
 		var d = ['sun','mon','tue','wed','thu','fri','sat'];
 		var m  = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
@@ -250,9 +226,22 @@ $( document ).ready(function() {
 				("00" + d.getMinutes()).slice(-2) + ":" +
 				("00" + d.getSeconds()).slice(-2)
 		};
-	}
-	//append calendar days dynamically and add classes, SHOULD RUN FIRST!!!
-	function loadMonth(){
+	}//dc is a date formatting and constructing object that stores dates
+
+
+	//Monthly view only
+	var nextMonthBtn = document.querySelector('#nextbtn');
+	var prevMonthBtn = document.querySelector('#prevbtn');
+	loadMonth(monthlyCalendar);
+	monthDateListeners();
+	nextMonthBtn.addEventListener('click',function(){
+		monthlyCalendar('next');
+	});
+	prevMonthBtn.addEventListener('click',function(){
+		monthlyCalendar('prev');
+	});
+
+	function loadMonth(monthlyCalendar){
 		for (var i = 0; i <= 5; i++){
 			if(i === 5){
 				$('#month_body').append(
@@ -275,9 +264,10 @@ $( document ).ready(function() {
 				"<td class='month_dates'></td>"
 			)
 		}
+
+		monthlyCalendar();
 	}
-	//bind appropriate days to the set month
-	function getCalendar(month){
+	function monthlyCalendar(month){
 
 		var calendar  = $('.month_dates');//place to inject month days
 		var monthName = $('#month_name');//place to inject month name
@@ -326,7 +316,19 @@ $( document ).ready(function() {
 			}
 		});
 	}
-	//monthdates.forEach Callback, passed in a date string "1990-12-24"
+	//REQUIRES loadMonth
+	function monthDateListeners(){
+		var monthDates 	 = document.querySelectorAll(".month_dates");//each day box
+
+		monthDates.forEach(function(day){
+			day.addEventListener('click',function(e){
+				var _date = e.target.dataset._date;
+				getEvents.classList.add('sidebar-show');
+				overlay.classList.remove('hide');
+				eventData(_date)
+			});
+		});
+	}
 	function eventData(_date){
 		var events = $(".events");
 		events.empty();
@@ -343,11 +345,7 @@ $( document ).ready(function() {
 					if(_date == dc.yyyymmdd(event.data[i].startDate)) {
 						//append to sidebar
 						events.append(`<div class='event'>
-											<div class="editable"  
-											data-title="${event.data[i].title}"
-											data-desc="${event.data[i].desc}"
-											data-startDate="${event.data[i].startDate}"
-											data-EndDate="${event.data[i].endDate}">
+											<div class="editable"  >
 												<div class='event-name'>
 													${event.data[i].title}
 												</div>
@@ -360,9 +358,16 @@ $( document ).ready(function() {
 												<div class='event-name' data-endDate="${event.data[i].endDate}">
 													${dc.jqformat(event.data[i].endDate)}
 												</div>
+												<button class='delete-event' id='${event.data[i]._id}'>Remove</button>
+												<button class='patch-event' 
+													id='${event.data[i]._id}' 
+													data-_date='${_date}'
+													data-title="${event.data[i].title}"
+													data-desc="${event.data[i].desc}"
+													data-startdate="${event.data[i].startDate}"
+													data-enddate="${event.data[i].endDate}">Update
+												</button>
 											</div>
-											<button class='delete-event' id='${event.data[i]._id}'>Remove</button>
-											<button class='patch-event' id='${event.data[i]._id}' data-_date='${_date}'>Update</button>
 										</div>`)
 					}
 				}
@@ -372,4 +377,6 @@ $( document ).ready(function() {
 			alert(res.error.message || res.error.errmsg)
 		})
 	}
+
+
 });

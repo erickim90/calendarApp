@@ -60,16 +60,7 @@ router.patch('/:_id', function(req, res) {
 		status: 200
 	};
 
-	var requestBody = {
-		title: 'LOL UPDATED',
-		startDate: '2016-11-30T12:00',
-		endDate: '2016-11-30T12:00',
-		desc: 'LOL UPDATED',
-		color: 'red',
-		repeat: 'None'
-	};
-
-	EventModel.findOneAndUpdate(req.params, requestBody, function(err,event){
+	EventModel.findOneAndUpdate(req.params, req.body, function(err,event){
 		if(err){
 			output.status = 500;
 			output.error = err;

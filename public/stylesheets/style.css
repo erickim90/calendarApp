@@ -36,6 +36,10 @@ body{
 .month_header{  color:white;  }
 
 /*Sidebar*/
+#edit-form{
+    border: 1px solid red;
+    padding:10px;
+}
 .get-events,.create-events{
     overflow-y: scroll;
     position: fixed;
