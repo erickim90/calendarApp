@@ -2,11 +2,11 @@ $(document).ready(function(){
 	//Required on all pages
 	var dc = new DateConstruct();//required
 	var getEvents    = document.querySelector(".get-events");
+	var eventActions = $(".get-events" );
 	var createEvents = document.querySelector(".create-events");
 	var overlay      = document.querySelector(".overlay");
 	var createBtn    = document.querySelector(".create-event-btn");
 
-	patchDeleteEvents();
 	overlay.addEventListener('click',function(){
 		getEvents.classList.remove('sidebar-show');
 		createEvents.classList.remove('sidebar-show');
@@ -35,8 +35,6 @@ $(document).ready(function(){
 			alert(res.error.message || res.error.errmsg)
 		})
 	});
-	function patchDeleteEvents(){
-		var eventActions = $(".get-events" );
 		eventActions.on( "click", ".delete-event", function(e) {
 			var self = this;
 			var event_id = e.currentTarget.id;
@@ -141,7 +139,6 @@ $(document).ready(function(){
 
 
 		});
-	}
 	function DateConstruct(){
 		var d = ['sun','mon','tue','wed','thu','fri','sat'];
 		var m  = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
@@ -227,7 +224,6 @@ $(document).ready(function(){
 				("00" + d.getSeconds()).slice(-2)
 		};
 	}//dc is a date formatting and constructing object that stores dates
-
 
 	//Monthly view only
 	var nextMonthBtn = document.querySelector('#nextbtn');
