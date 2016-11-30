@@ -21,7 +21,7 @@ userSchema.methods.findThisAnd = function(name){
             {username: that.username},
             {username: name }
           ]
-        })
+        },{}).limit(3).sort({createAt: 1})
         .then(function (result) {
           if(result.length === 0){
             reject('NO matches found!');
@@ -59,10 +59,17 @@ router.get('/', function(req, res, next) {
 /* GET users listing. */
 router.post('/instance', function(req, res, next) {
 
-  var eric = new User({username:'soboke'});
+  var eric = new User(req.body);
 
   eric.findSimilar(function(err,doc){
-    res.json(doc)
+    if(doc.length > 0){
+      res.send('Warning! Duplicate Entry!');
+      eric.save();
+    }
+    else{
+      res.send('New name inserted');
+      eric.save();
+    }
   });
 
 });
@@ -75,11 +82,48 @@ router.get('/static', function(req, res, next) {
 
 });
 
-router.get('/promise', function(req, res, next) {
+router.get('/aggregate',function(req,res){
+  // Created with 3T MongoChef, the GUI for MongoDB - https://3t.io/mongochef
+  //aggregate is not a find, its to calculate and create something specific
+  User.aggregate(
 
-  var eric = new User({username:'soboke'});
+      // Pipeline
+      [
+        // Stage 1
+        {
+          $limit: 5
+        },
 
-  eric.findThisAnd('Hoboken')//a promise
+        // Stage 2
+        {
+          $sort: {
+            createdAt: -1
+          }
+        },
+
+      ],function(err,doc){
+        res.json(doc)
+      });
+});
+
+router.get('/query',function(req,res) {
+
+  //using find with queries to retrieve documents (un-aggregated) in a certain way
+  User.find({username:'soboke'})
+      .limit(3)
+      .sort({createAt : 1})
+      .exec(function(err,doc){
+        res.send(doc)
+      })
+
+});
+
+
+router.post('/promise', function(req, res, next) {
+
+  var eric = new User(req.body);
+
+  eric.findThisAnd('Unknown')//a promise
       .then(function(resolve){//on resolve
         res.send(resolve)
       })
@@ -88,5 +132,6 @@ router.get('/promise', function(req, res, next) {
       });
 
 });
+
 
 module.exports = router;
