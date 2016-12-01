@@ -5,107 +5,146 @@
  * Created by Kobe on 11/28/2016.
  */
 $( document ).ready(function() {
+	//Required on all pages
 	var dc = new DateConstruct();//required
-
 	var getEvents    = document.querySelector(".get-events");
+	var eventActions = $(".get-events" );
 	var createEvents = document.querySelector(".create-events");
 	var overlay      = document.querySelector(".overlay");
+	var createBtn    = document.querySelector(".create-event-btn");
+
 	overlay.addEventListener('click',function(){
 		getEvents.classList.remove('sidebar-show');
 		createEvents.classList.remove('sidebar-show');
 		overlay.classList.add('hide');
 	});
-	var createBtn    = document.querySelector(".create-event-btn");
 	createBtn.addEventListener('click', function(){
 		createEvents.classList.add('sidebar-show');
 		overlay.classList.remove('hide');
 	});
-	var nextMonthBtn = document.querySelector('#nextbtn');
-	nextMonthBtn.addEventListener('click',function(){
-		// getCalendar('next');
-	});
-	var prevMonthBtn = document.querySelector('#prevbtn');
-	prevMonthBtn.addEventListener('click',function(){
-		// getCalendar('prev');
-	});
-
-	function loadWeek(){
-		for (var i = 0; i <= 5; i++){
-			if(i === 5){
-				$('#week_body').append(
-					"<tr id='extra_row' class='month_body_row'></tr>"
-				)
-			}
-			else{
-				$('#week_body').append(
-					"<tr class='month_body_row'></tr>"
-				)
-			}
-		}
-		for (d in dc.days){
-			$('#week_days').append(
-				`<td class="text-center"> ${dc.days[d][1]} </td>`
-			)
-		}
-		for (var j = 0; j < 7; j++){
-			$('.month_body_row').append(
-				"<td class='month_dates'></td>"
-			)
-		}
-	}
-	loadWeek();
-
-
-
-
-
-
-
-	// loadMonth();//load months with selectable classes and ids first
-	// getCalendar();//load information into calendar
-	var monthDates 	 = document.querySelectorAll(".month_dates");//each day box
-	var eventDate    = document.querySelector(".event-date");//inside sidebar text
-	monthDates.forEach(function(day){
-		day.addEventListener('click',function(e){
-			var _date = e.target.dataset._date;
-			getEvents.classList.add('sidebar-show');
-			overlay.classList.remove('hide');
-			eventDate.innerHTML = _date;
-			eventData(_date)
-		});
-	});
-	var createEvent  = $('#createEventForm');
-	createEvent.submit(function(event){
+	$('#createEventForm').submit(function(event){
 		event.preventDefault(); //prevent default action
-		var post_url = $(this).attr("action"); //get form action url
-		var request_method = $(this).attr("method"); //get form GET/POST method
-		var form_data = $(this).serialize(); //Encode form elements for submission
 
-		$.ajax({
+		var post_url       = $(this).attr("action"); //get form action url
+		var request_method = $(this).attr("method"); //get form GET/POST method
+		var form_data      = $(this).serialize(); //Encode form elements for submission
+		// var form_data = {"title": "herpderp",  _id:"583debef0aedb4039849cd4c"};//ERROR THROWING FORM DATA
+
+		$.ajax({//CREATE
 			url : post_url,
 			method: request_method,
-			data : form_data,
-			success: function() {console.log('Success');},
-			error: function(err) {console.log(err);}
-		}).done(function(response){ //
-			console.log(response)
-		});
+			data : form_data
+		}).done(function(res){
+			console.log(res)
+		}).fail(function(xhr){
+			var res = JSON.parse(xhr.responseText);
+			alert(res.error.message || res.error.errmsg)
+		})
 	});
-
-	$(".get-events" ).on( "click", ".delete-event", function(e) {
+	eventActions.on( "click", ".delete-event", function(e) {
 		var self = this;
 		var event_id = e.currentTarget.id;
-		$.ajax({
+		$.ajax({//DELETE
 			url : `events/${event_id}`,
-			method: 'delete',
-			success: function() {console.log('Success');},
-			error: function(err) {console.log(err);}
-		}).done(function(){
+			method: 'delete'
+		}).done(function(res){
+			console.log(res)
 			$( self ).parent().remove()
-		});
+		}).fail(function(xhr){
+			var res = JSON.parse(xhr.responseText);
+			alert(res.error.message || res.error.errmsg)
+		})
 	});
+	eventActions.on( "click", ".patch-event", function(e) {
+		var event_id = e.currentTarget.id;
+		var event_date = e.currentTarget.dataset._date;
+		var title = e.currentTarget.dataset.title;
+		var startDate = e.currentTarget.dataset.startdate;
+		var endDate = e.currentTarget.dataset.enddate;
+		var desc = e.currentTarget.dataset.desc;
+		$(this).parent().empty().append(`<form id="edit-form" method="patch" action="/events/${event_id}">
+    		<h4 class="margin-0">Edit Event</h4>
 
-	//dc is a date formatting and constructing object that stores dates
+    		<div class="margin-top-20 text-center">
+    		  <label for="evtName">Event Name: </label>
+    		  <input class="form-element" type="text" name="title" placeholder="Name of Event" id="evtName" value="${title}"/>
+    		</div>
+
+    		<div class="margin-top-20 text-center">
+    		  <div class="inline-block">
+    		    <label for="startDate">Start Time: </label>
+    		    <input class="form-element" type="datetime-local" name="startDate" id="startDate" value="${startDate.slice(0, -1)}"/>
+    		  </div>
+    		</div>
+
+    		<div class="margin-top-20 text-center">
+    		  <div class="inline-block">
+    		    <label for="endDate">End Time: </label>
+    		    <input class="form-element" type="datetime-local" name="endDate" id="endDate" value="${endDate.slice(0, -1)}"/>
+    		  </div>
+    		</div>
+    		<div class="margin-top-20 text-center">
+    		  <label for="description">Description: </label>
+    		  <textarea class="form-element" name="desc" placeholder="Description of event" id="description">${desc}</textarea>
+    		</div>
+
+    		<!--<div class="margin-top-20 text-center">-->
+    		  <!--<label for="color">Color: </label>-->
+    		  <!--<select class="form-element" name="color" id="color">-->
+    		    <!--<option value="red">Red</option>-->
+    		    <!--<option value="blue">Blue</option>-->
+    		    <!--<option value="green">Green</option>-->
+    		  <!--</select>-->
+   			<!--</div>-->
+
+		    <!--<h5>Repeat</h5>-->
+		    <!--<div class="margin-top-20">-->
+		      <!--<input class="form-element" type="radio" name="repeat" value="None" checked>None-->
+		      <!--<input class="form-element" type="radio" name="repeat" value="Weekly">Weekly-->
+		      <!--<input class="form-element" type="radio" name="repeat" value="Monthly">Monthly-->
+		    <!--</div>-->
+
+		    <!--<div class="margin-top-20">-->
+		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="sun">Sun-->
+		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="mon">Mon-->
+		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="tue">Tue-->
+		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="wed">Wed-->
+		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="thur">Thu-->
+		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="fri">Fri-->
+		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="sat">Sat-->
+		    <!--</div>-->
+			<!---->
+		    <!--<div class="margin-top-20">-->
+		      <!--<h4>This event will repeat on the {date} of each month</h4>-->
+		    <!--</div>-->
+		
+		    <button type="submit">Submit</button>
+
+  		</form>`);
+		//spawn a modal
+		$('#edit-form').submit(function(event){
+			event.preventDefault(); //prevent default action
+
+			var post_url       = $(this).attr("action"); //get form action url
+			var request_method = $(this).attr("method"); //get form GET/POST method
+			var form_data      = $(this).serialize(); //Encode form elements for submission
+			// var form_data = {"title": "herpderp",  _id:"583debef0aedb4039849cd4c"};//ERROR THROWING FORM DATA
+
+			$.ajax({//CREATE
+				url : post_url,
+				method: request_method,
+				data : form_data
+			}).done(function(res){
+				console.log(res);
+				eventData(event_date);
+			}).fail(function(xhr){
+				var res = JSON.parse(xhr.responseText);
+				alert(res.error.message || res.error.errmsg)
+			})
+		})
+
+
+	});
 	function DateConstruct(){
 		var d = ['sun','mon','tue','wed','thu','fri','sat'];
 		var m  = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
@@ -138,22 +177,26 @@ $( document ).ready(function() {
 		this.day   = this.date.getDate();
 		this.currdate = null;
 		this.setdate = function(yyyy,mm,dd){
-			if(!dd){dd = 1}
-			this.currdate  = new Date(yyyy,mm,dd);
+			if (arguments.length == 2){this.currdate  = new Date(yyyy,mm);}
+			else if(arguments.length === 3){this.currdate  = new Date(yyyy,mm,dd);}
+			else{this.currdate  = new Date();}
 			this.year  = this.currdate.getFullYear();
 			this.month = this.currdate.getMonth();
 			this.day   = this.currdate.getDate();
 		};
-		this.getday = function(year, month){
-			var day;
+		this.getday = function(year, month, day){
+			var getday;
 			if (arguments.length == 2){
 
-				day = new Date(year, month).getDay();
+				getday = new Date(year, month).getDay();
+			}
+			if (arguments.length === 3){
+				getday = new Date(year, month, day).getDay();
 			}
 			else{
-				day = new Date(this.year,this.month).getDay();
+				getday = new Date(this.year,this.month).getDay();
 			}
-			return this.days[d[day]];
+			return this.days[d[getday]];
 		};
 		this.getmonth = function(year, month){
 			var mon;
@@ -190,98 +233,105 @@ $( document ).ready(function() {
 				("00" + d.getMinutes()).slice(-2) + ":" +
 				("00" + d.getSeconds()).slice(-2)
 		};
+	}//dc is a date formatting and constructing object that stores dates
+
+	//weekly only
+	var nextWeekBtn = document.querySelector('#nextbtn');
+	var prevWeekBtn = document.querySelector('#prevbtn');
+	loadWeek();
+	nextWeekBtn.addEventListener('click',function(){
+		weeklyCalendar('next');
+	});
+	prevWeekBtn.addEventListener('click',function(){
+		weeklyCalendar('prev');
+	});
+
+	function loadWeek(){
+		var $week_days = $('#week_days');
+
+		$week_days.append(
+			`<td class="text-center"> TIME </td>`
+		);
+		for (d in dc.days){
+			$week_days.append(
+				`<td class="text-center week_dates"> ${dc.days[d][1]} </td>`
+			)
+		}
+
+
+		for (var x = 1; x <= 24; x++){
+			var time = x <= 12 ? x + ":00 am" : (x-12)+":00 pm";
+
+			$('#week_body').append(
+				`<tr class='week_body_row'>
+					<td class="color-white text-center"> ${ time } </td>
+				</tr>`
+			);
+
+		}
+		for(var y = 1; y <= 7; y++){
+			$('.week_body_row').append(
+				"<td class='week_times'></td>"
+			)
+		}
+
+		weeklyCalendar()
 	}
-	//append calendar days dynamically and add classes, SHOULD RUN FIRST!!!
+	function weeklyCalendar(next){
 
-	//bind appropriate days to the set month
-	function getCalendar(month){
-
-		var calendar  = $('.month_dates');//place to inject month days
-		var monthName = $('#month_name');//place to inject month name
-		var extraRow  = $('#extra_row');//class set on the last rows of the month
+		var calendar  = $('.week_dates');//place to inject month days
+		var weekTitle = $('#week');//place to inject month name
+		var extraRow  = $('#extra_row');
+		//class set on the last rows of the month
 		//get current month
 		var m = dc.getmonth();
 		//get number of days in month and the first day of the month
-		var numOfDays = m[3];
-		var skipDays = dc.getday()[0];
+		var todaysDate = dc.day;
+		var today      = dc.getday(dc.year,dc.month, dc.day);
 
-		if(month){
+		if(next){
 			//if a button is pressed
-			if(month === 'next'){
-				dc.setdate(dc.year,dc.month + 1)
+			if(next === 'next'){
+				dc.setdate(dc.year,dc.month, dc.day + 7);
 			}
-			else if(month === 'prev'){
-				dc.setdate(dc.year,dc.month - 1)
+			else if(next === 'prev'){
+				console.log(dc.day - 7);
+				dc.setdate(dc.year,dc.month, dc.day - 7);
 			}
 			//set new date variables
-			numOfDays = m[3];
-			skipDays = dc.getday()[0];
 			m = dc.getmonth();
+			todaysDate = dc.day;
+			today      = dc.getday(dc.year,dc.month, dc.day);
 		}
-
 		//append name to calendar
-		monthName.empty().append(`${m[1]} ${dc.year}`);
+		weekTitle.empty().append(`${m[1]} ${dc.year}`);
 
 		$.each(calendar, function(index, day){
-
 			day.innerHTML = '';
 			//append numbers to calendar based on index + days to skip + number of days
-			if(numOfDays + skipDays < 36){
-				extraRow.hide();
-			}
-			else{
-				extraRow.show();
-			}
-			if(index < skipDays){
-				// load last days of the previous month
-			}
-			else if(index >= numOfDays + skipDays) {
-				// load first days of the next month
-			}
-			else{
-				day.dataset._date = dc.ymd(dc.year,dc.month + 1,index - skipDays + 1);
-				day.innerHTML = index - skipDays + 1;
-			}
-		});
-	}
-	//monthdates.forEach Callback, passed in a date string "1990-12-24"
-	function eventData(_date){
-		var events       = $(".events");
-		var eventData = [];
-		events.empty();
-		//get all events
-		$.ajax({
-			method: "GET",
-			url: "/events",
-			success: function() {console.log('Success');},
-			error: function(err) {console.log(err);}
-		}).done(function(eventData) {
-			//if events exist in DB
-			if(eventData){
-				for (var i = 0; i < eventData.length; i++){
-					//see if passed in date are equal to any of the DBs event dates
-					//format mongo date into yyyy-mm-dd
-					if(_date == dc.yyyymmdd(eventData[i].startDate)) {
-						//append to sidebar
-						events.append(`<div class='event'>
-											<div class='event-name'>
-												${eventData[i].title}
-											</div>
-											<div class='event-desc'>
-												${eventData[i].desc}
-											</div>
-											<div class='event-name'>
-												${dc.jqformat(eventData[i].startDate)}
-											</div>
-											<div class='event-name'>
-												${dc.jqformat(eventData[i].endDate)}
-											</div>
-											<button class='delete-event' id='${eventData[i]._id}'>Remove</button>
-										</div>`)
-					}
-				}
+			switch (true) {
+				case (index === 0):
+					day.innerHTML = `${dc.getday(dc.year,dc.month, dc.day - 3)[1]} ${new Date(dc.year,dc.month, todaysDate - 3).getDate()}`;
+					break;
+				case (index === 1):
+					day.innerHTML = `${dc.getday(dc.year,dc.month, dc.day - 2)[1]} ${new Date(dc.year,dc.month, todaysDate - 2).getDate()}`;
+					break;
+				case (index === 2):
+					day.innerHTML = `${dc.getday(dc.year,dc.month, dc.day - 1)[1]} ${new Date(dc.year,dc.month, todaysDate - 1).getDate()}`;
+					break;
+				case (index === 3):
+					day.innerHTML =  `${today[1]} ${todaysDate}`;
+					break;
+				case (index === 4):
+					day.innerHTML = `${dc.getday(dc.year,dc.month, dc.day + 1)[1]} ${todaysDate + 1 >= m[3] ? 1 : todaysDate + 1}`;
+					break;
+				case (index === 5):
+					day.innerHTML = `${dc.getday(dc.year,dc.month, dc.day + 2)[1]} ${todaysDate + 1 >= m[3] ? 2 : todaysDate + 2}`;
+					break;
+				case (index === 6):
+					day.innerHTML = `${dc.getday(dc.year,dc.month, dc.day + 3)[1]} ${todaysDate + 1 >= m[3] ? 3 : todaysDate + 3}`;
+					break;
 			}
 		});
 	}
-
 });

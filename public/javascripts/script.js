@@ -230,11 +230,15 @@ $(document).ready(function(){
 	var prevMonthBtn = document.querySelector('#prevbtn');
 	loadMonth(monthlyCalendar);
 	monthDateListeners();
+	loadEvents();
+
 	nextMonthBtn.addEventListener('click',function(){
 		monthlyCalendar('next');
+		loadEvents();
 	});
 	prevMonthBtn.addEventListener('click',function(){
 		monthlyCalendar('prev');
+		loadEvents();
 	});
 
 	function loadMonth(monthlyCalendar){
@@ -289,10 +293,9 @@ $(document).ready(function(){
 		}
 		//append name to calendar
 		monthName.empty().append(`${m[1]} ${dc.year}`);
-
 		$.each(calendar, function(index, day){
-
 			day.innerHTML = '';
+			day.dataset._date = '';
 			//append numbers to calendar based on index + days to skip + number of days
 			if(numOfDays + skipDays < 36){
 				extraRow.hide();
@@ -373,6 +376,25 @@ $(document).ready(function(){
 			alert(res.error.message || res.error.errmsg)
 		})
 	}
-
+	function loadEvents(){
+		$.ajax({//GET
+			method: "GET",
+			url: "/events",
+			success: function() {console.log('Success');},
+		}).done(function(event) {
+			for (var i = 0; i < event.data.length; i++){
+				var eventDate = dc.yyyymmdd(event.data[i].startDate);
+				var month = $('.month_dates');
+				month.each(function(day){
+					if($(this).attr('data-_date') == eventDate){
+						$(this).append(`<p style="font-size:10px;">${event.data[i].title}</p>`)
+					}
+				});
+			}
+		}).fail(function(xhr){
+			var res = JSON.parse(xhr.responseText);
+			alert(res.error.message || res.error.errmsg)
+		});
+	}
 
 });

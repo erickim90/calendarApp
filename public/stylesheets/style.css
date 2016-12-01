@@ -7,6 +7,7 @@
 .float-right      {float:right;}
 .float-left       {float:left;}
 .hide             {visibility: hidden;}
+.color-white      {color:white;}
 body{
     background-color: #444;
 }
@@ -15,25 +16,7 @@ body{
     bottom:20px;
     right:20px;
 }
-/*index.html*/
-#month_table{
-    table-layout: fixed;
-    width:100%;
-    background-color:black;
-}
-.month_dates{
-    height:80px;
-    color:white;
-    vertical-align: top;
-    background-color:grey;
-    border: 3px solid grey;
-    border-radius:5px;
-    transition: 1s background-color;
-}
-.month_dates:hover{
-    background-color: #9b98b8;
-}
-.month_header{  color:white;  }
+
 
 /*Sidebar*/
 #edit-form{
@@ -112,25 +95,43 @@ body{
 
 
 
-
-
-
-
-
+/*index.html*/
+#month_table{
+    table-layout: fixed;
+    width:100%;
+    background-color:black;
+}
+.month_dates{
+    height:80px;
+    color:white;
+    vertical-align: top;
+    background-color:grey;
+    border: 3px solid grey;
+    border-radius:5px;
+    transition: 1s background-color;
+}
+.month_dates:hover{
+    background-color: #9b98b8;
+}
+.month_header{  color:white;  }
 
 /*weekly.html*/
-/*#week_table{*/
-    /*width:100%;*/
-    /*background-color:rgba(0,0,255,.4);*/
-/*}*/
-/*.week_dates{*/
-    /*color:black;*/
-    /*background-color:white;*/
-    /*border: 1px solid white;*/
-/*}*/
-/*.week_header,.week_days,.week_times{*/
-    /*color:white;*/
-/*}*/
+#week_table{
+    table-layout: fixed;
+    width:100%;
+    background-color:black;
+}
+.week_times{
+    color:white;
+    vertical-align: top;
+    background-color:grey;
+    border: 3px solid grey;
+    border-radius:5px;
+    transition: 1s background-color;
+}
+.week_header,.week_days,.week_times{
+    color:white;
+}
 /*!*daily.html*!*/
 /*#day_table{*/
     /*width:100%;*/
