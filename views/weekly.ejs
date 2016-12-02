@@ -2,11 +2,10 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title><%= title %></title>
+    <title> <%= queryDate %></title>
     <link rel='stylesheet' href='stylesheets/style.css' />
 </head>
 <body>
-
 <div class="nav">
     <ul>
         <li id="prevbtn" class="Prev float-left"><a href="#">Prev</a></li>
@@ -20,8 +19,17 @@
 <div>
     <table id="week_table">
         <thead class="week_header">
-        <tr><th id="week" colspan="8">THE WEAK</th></tr>
-        <tr id="week_days"></tr>
+        <tr><th></th><th id="week" colspan="7"><%= dateHeader %></th></tr>
+        <tr id="week_days">
+            <td class="text-center"> TIME </td>
+            <td class="text-center week_dates"> Sunday </td>
+            <td class="text-center week_dates"> Monday </td>
+            <td class="text-center week_dates"> Tuesday </td>
+            <td class="text-center week_dates"> Wednesday </td>
+            <td class="text-center week_dates"> Thursday </td>
+            <td class="text-center week_dates"> Friday </td>
+            <td class="text-center week_dates"> Saturday </td>
+        </tr>
         </thead>
         <tbody id="week_body">
         </tbody>
@@ -104,6 +112,11 @@
 <button class="create-event-btn">Create</button>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+<script src="http://momentjs.com/downloads/moment.js"></script>
+<script>
+    //ejs
+     var queryDate = '<%= queryDate %>'
+</script>
 <script src="javascripts/weeklyScript.js"></script>
 </body>
 </html>

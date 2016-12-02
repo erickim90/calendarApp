@@ -36,6 +36,37 @@ userSchema.methods.findThisAnd = function(name){
         });
   });
 };
+userSchema.methods.dateValidate = function(){
+    //ensure 'this' is set to the new instance of User {username:'Eric'}
+    var that = this;
+    //create a new promise
+    return new Promise(function(resolve, reject) {
+        that.model('User')
+            .find(
+                { $or: [
+                    { "startDate": { $lte: that.startDate} }, { $and: [ { "endDate": { $gt: that.startDate } } ] }
+                ]
+                },{})
+            .then(function (result) {
+                if(result.length === 0){
+                    console.log('nomatch')
+                    resolve('no conflicts!');
+                }
+                else{
+                    var obj = {
+                        message : "Can't create, conflict found!",
+                        data : result
+                    };
+                    reject(obj);
+                }
+            });
+    });
+};
+
+// $or: [
+//     { "startDate": { $lte: that.startDate }},
+//     {endDate: { gte: that.startDate } }
+// ]
 //Has access to the properties of NEW instance of User that was created {username:"eckim90"};
 //allows the comparison of the model to the new instance using "this".
 userSchema.methods.usernameValid = function(cb){
@@ -158,7 +189,7 @@ router.post('/promise', function(req, res, next) {
 
   var eric = new User(req.body);
 
-  eric.findThisAnd('sobokes')//a promise
+  eric.dateValidate('sobokes')//a promise
       .then(function(resolve){//on resolve
         res.send(resolve)
       })

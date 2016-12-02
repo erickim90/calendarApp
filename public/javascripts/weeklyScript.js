@@ -48,7 +48,6 @@ $( document ).ready(function() {
 			url : `events/${event_id}`,
 			method: 'delete'
 		}).done(function(res){
-			console.log(res)
 			$( self ).parent().remove()
 		}).fail(function(xhr){
 			var res = JSON.parse(xhr.responseText);
@@ -234,11 +233,13 @@ $( document ).ready(function() {
 				("00" + d.getSeconds()).slice(-2)
 		};
 	}//dc is a date formatting and constructing object that stores dates
-
 	//weekly only
 	var nextWeekBtn = document.querySelector('#nextbtn');
 	var prevWeekBtn = document.querySelector('#prevbtn');
+
 	loadWeek();
+	weeklyCalendar();
+
 	nextWeekBtn.addEventListener('click',function(){
 		weeklyCalendar('next');
 	});
@@ -247,18 +248,6 @@ $( document ).ready(function() {
 	});
 
 	function loadWeek(){
-		var $week_days = $('#week_days');
-
-		$week_days.append(
-			`<td class="text-center"> TIME </td>`
-		);
-		for (d in dc.days){
-			$week_days.append(
-				`<td class="text-center week_dates"> ${dc.days[d][1]} </td>`
-			)
-		}
-
-
 		for (var x = 1; x <= 24; x++){
 			var time = x <= 12 ? x + ":00 am" : (x-12)+":00 pm";
 
@@ -270,68 +259,129 @@ $( document ).ready(function() {
 
 		}
 		for(var y = 1; y <= 7; y++){
+
 			$('.week_body_row').append(
 				"<td class='week_times'></td>"
 			)
+
 		}
-
-		weeklyCalendar()
 	}
-	function weeklyCalendar(next){
 
-		var calendar  = $('.week_dates');//place to inject month days
-		var weekTitle = $('#week');//place to inject month name
-		var extraRow  = $('#extra_row');
-		//class set on the last rows of the month
-		//get current month
-		var m = dc.getmonth();
-		//get number of days in month and the first day of the month
-		var todaysDate = dc.day;
-		var today      = dc.getday(dc.year,dc.month, dc.day);
+	function weeklyCalendar(next){
+		var calendar = $('.week_dates');//place to inject month days
+		var currDate = queryDate;//from ejs <script>
+
 
 		if(next){
-			//if a button is pressed
-			if(next === 'next'){
-				dc.setdate(dc.year,dc.month, dc.day + 7);
-			}
-			else if(next === 'prev'){
-				console.log(dc.day - 7);
-				dc.setdate(dc.year,dc.month, dc.day - 7);
-			}
-			//set new date variables
-			m = dc.getmonth();
-			todaysDate = dc.day;
-			today      = dc.getday(dc.year,dc.month, dc.day);
-		}
-		//append name to calendar
-		weekTitle.empty().append(`${m[1]} ${dc.year}`);
+				if(next === 'prev'){
+					window.location.replace(window.location.origin +
+						window.location.pathname + '?date=' +
+						moment(queryDate).subtract(7,'days').format('YYYY-MM-DD'))
+				}
+				else if(next === 'next'){
+					// $(location).attr('href', 'http://stackoverflow.com') //the
+					window.location.replace(window.location.origin +
+						window.location.pathname + '?date=' +
+						moment(queryDate).add(7,'days').format('YYYY-MM-DD'))
 
+				}
+
+			}
 		$.each(calendar, function(index, day){
 			day.innerHTML = '';
+			//TODO remove switch statement, make better
 			//append numbers to calendar based on index + days to skip + number of days
-			switch (true) {
-				case (index === 0):
-					day.innerHTML = `${dc.getday(dc.year,dc.month, dc.day - 3)[1]} ${new Date(dc.year,dc.month, todaysDate - 3).getDate()}`;
+			switch (index) {
+				case 0:
+					day.innerHTML = `${moment(currDate).subtract(3, 'days').format('dddd Do')}`;
 					break;
-				case (index === 1):
-					day.innerHTML = `${dc.getday(dc.year,dc.month, dc.day - 2)[1]} ${new Date(dc.year,dc.month, todaysDate - 2).getDate()}`;
+				case 1:
+					day.innerHTML = `${moment(currDate).subtract(2, 'days').format('dddd Do')}`;
 					break;
-				case (index === 2):
-					day.innerHTML = `${dc.getday(dc.year,dc.month, dc.day - 1)[1]} ${new Date(dc.year,dc.month, todaysDate - 1).getDate()}`;
+				case 2:
+					day.innerHTML = `${moment(currDate).subtract(1, 'days').format('dddd Do')}`;
 					break;
-				case (index === 3):
-					day.innerHTML =  `${today[1]} ${todaysDate}`;
+				case 3:
+					console.log(moment(currDate))
+					day.innerHTML = `${moment(currDate).format('dddd Do')}`;
 					break;
-				case (index === 4):
-					day.innerHTML = `${dc.getday(dc.year,dc.month, dc.day + 1)[1]} ${todaysDate + 1 >= m[3] ? 1 : todaysDate + 1}`;
+				case 4:
+					day.innerHTML = `${moment(currDate).add(1, 'days').format('dddd Do')}`;
 					break;
-				case (index === 5):
-					day.innerHTML = `${dc.getday(dc.year,dc.month, dc.day + 2)[1]} ${todaysDate + 1 >= m[3] ? 2 : todaysDate + 2}`;
+				case 5:
+					day.innerHTML = `${moment(currDate).add(2, 'days').format('dddd Do')}`;
 					break;
-				case (index === 6):
-					day.innerHTML = `${dc.getday(dc.year,dc.month, dc.day + 3)[1]} ${todaysDate + 1 >= m[3] ? 3 : todaysDate + 3}`;
+				case 6:
+					day.innerHTML = `${moment(currDate).add(3, 'days').format('dddd Do')}`;
 					break;
 			}
 		});
 	}
+
+
+
+
+
+
+
+
+
+	//old
+	// function weeklyCalendar(next){
+	//
+	// 	var calendar  = $('.week_dates');//place to inject month days
+	// 	var weekTitle = $('#week');//place to inject month name
+	// 	var extraRow  = $('#extra_row');
+	// 	//class set on the last rows of the month
+	// 	//get current month
+	// 	var m = dc.getmonth();
+	// 	//get number of days in month and the first day of the month
+	// 	var todaysDate = dc.day;
+	// 	var today      = dc.getday(dc.year,dc.month, dc.day);
+	//
+	// 	if(next){
+	// 		//if a button is pressed
+	// 		if(next === 'next'){
+	// 			dc.setdate(dc.year,dc.month, dc.day + 7);
+	// 		}
+	// 		else if(next === 'prev'){
+	// 			console.log(dc.day - 7);
+	// 			dc.setdate(dc.year,dc.month, dc.day - 7);
+	// 		}
+	// 		//set new date variables
+	// 		m = dc.getmonth();
+	// 		todaysDate = dc.day;
+	// 		today      = dc.getday(dc.year,dc.month, dc.day);
+	// 	}
+	// 	//append name to calendar
+	// 	weekTitle.empty().append(`${m[1]} ${dc.year}`);
+	//
+	// 	$.each(calendar, function(index, day){
+	// 		day.innerHTML = '';
+	// 		//append numbers to calendar based on index + days to skip + number of days
+	// 		switch (true) {
+	// 			case (index === 0):
+	// 				day.innerHTML = `${dc.getday(dc.year,dc.month, dc.day - 3)[1]} ${new Date(dc.year,dc.month, todaysDate - 3).getDate()}`;
+	// 				break;
+	// 			case (index === 1):
+	// 				day.innerHTML = `${dc.getday(dc.year,dc.month, dc.day - 2)[1]} ${new Date(dc.year,dc.month, todaysDate - 2).getDate()}`;
+	// 				break;
+	// 			case (index === 2):
+	// 				day.innerHTML = `${dc.getday(dc.year,dc.month, dc.day - 1)[1]} ${new Date(dc.year,dc.month, todaysDate - 1).getDate()}`;
+	// 				break;
+	// 			case (index === 3):
+	// 				day.innerHTML =  `${today[1]} ${todaysDate}`;
+	// 				break;
+	// 			case (index === 4):
+	// 				day.innerHTML = `${dc.getday(dc.year,dc.month, dc.day + 1)[1]} ${todaysDate + 1 >= m[3] ? 1 : todaysDate + 1}`;
+	// 				break;
+	// 			case (index === 5):
+	// 				day.innerHTML = `${dc.getday(dc.year,dc.month, dc.day + 2)[1]} ${todaysDate + 1 >= m[3] ? 2 : todaysDate + 2}`;
+	// 				break;
+	// 			case (index === 6):
+	// 				day.innerHTML = `${dc.getday(dc.year,dc.month, dc.day + 3)[1]} ${todaysDate + 1 >= m[3] ? 3 : todaysDate + 3}`;
+	// 				break;
+	// 		}
+	// 	});
+	// }
 });

@@ -29,7 +29,7 @@ $(document).ready(function(){
 			method: request_method,
 			data : form_data
 		}).done(function(res){
-			console.log(res)
+			alert('event created')
 		}).fail(function(xhr){
 			var res = JSON.parse(xhr.responseText);
 			alert(res.error.message || res.error.errmsg)
