@@ -3,6 +3,7 @@
  */
 var express = require('express');
 var router = express.Router();
+var moment = require('moment');
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
@@ -60,14 +61,47 @@ router.get('/', function(req, res) {
 	var output = {
 		status: 200
 	};
+	console.log(moment(req.query.date).startOf('day').add(3, 'day'));
+	console.log(moment(req.query.date).endOf('day').subtract(3, 'day'));
+	var query = {};
+	if(req.query){
+		query = { $and: [ { "startDate": { $lte: moment(req.query.date).startOf('day').add(3, 'day') } },
+						  { "startDate": { $gte: moment(req.query.date).endOf('day').subtract(3, 'day') } } ] }
+	}
+	// console.log(moment(req.params.eventdate))
 
-	EventModel.find({},function(err,events){
+	EventModel.find(query,function(err,events){
 		if(err){
 			output.status = 500;
 			output.error = err;
 			res.status(output.status).json(output);
 		}
 		else{
+			output.data = events;
+			res.status(output.status).json(output)
+		}
+	});
+});
+
+router.get('/:eventdate', function(req, res) {
+	var output = {
+		status: 200
+	};
+	var param  = moment(req.params.eventdate).startOf('day');
+	var param2 = moment(req.params.eventdate).endOf('day');
+
+	console.log(param,param2)
+
+	var	query = { $and: [ { "startDate": { $gte: param } },
+						  { "startDate": { $lte: param2 } } ] };
+	EventModel.find(query,function(err,events){
+		if(err){
+			output.status = 500;
+			output.error = err;
+			res.status(output.status).json(output);
+		}
+		else{
+			console.log(events)
 			output.data = events;
 			res.status(output.status).json(output)
 		}

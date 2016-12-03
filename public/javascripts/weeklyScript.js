@@ -35,11 +35,12 @@ $( document ).ready(function() {
 			method: request_method,
 			data : form_data
 		}).done(function(res){
-			console.log(res)
+			alert('event created')
 		}).fail(function(xhr){
 			var res = JSON.parse(xhr.responseText);
 			alert(res.error.message || res.error.errmsg)
-		})
+		});
+
 	});
 	eventActions.on( "click", ".delete-event", function(e) {
 		var self = this;
@@ -234,11 +235,14 @@ $( document ).ready(function() {
 		};
 	}//dc is a date formatting and constructing object that stores dates
 	//weekly only
-	var nextWeekBtn = document.querySelector('#nextbtn');
-	var prevWeekBtn = document.querySelector('#prevbtn');
-
+	//'<%= queryDate %>'
+	var nextWeekBtn  = document.querySelector('#nextbtn');
+	var prevWeekBtn  = document.querySelector('#prevbtn');
+	var weeklyEvents = [];
 	loadWeek();
 	weeklyCalendar();
+	loadEvents();
+	weekDateListeners();
 
 	nextWeekBtn.addEventListener('click',function(){
 		weeklyCalendar('next');
@@ -248,45 +252,80 @@ $( document ).ready(function() {
 	});
 
 	function loadWeek(){
-		for (var x = 1; x <= 24; x++){
-			var time = x <= 12 ? x + ":00 am" : (x-12)+":00 pm";
+		var currDate = queryDate;
+		for (var x = 0; x < 24; x++){
+			// var time = x <= 12 ? x + ":00 am" : (x-12)+":00 pm";
+			var time = moment().set('hour', x).set('minutes',0).format('hh a');
+			var displayTime = moment().set('hour', x).set('minutes',0).format('hh:mm a');
+
 
 			$('#week_body').append(
 				`<tr class='week_body_row'>
-					<td class="color-white text-center"> ${ time } </td>
+					<td class="color-white text-center time-row" data-time="${time}"> ${ displayTime } </td>
 				</tr>`
 			);
 
 		}
-		for(var y = 1; y <= 7; y++){
-
-			$('.week_body_row').append(
-				"<td class='week_times'></td>"
-			)
-
+		for(var y = 0; y <= 6; y++){
+			switch (y) {
+				case 0:
+					$('.week_body_row').append(
+						`<td class='week_times' data-index='${moment(currDate).subtract(3, 'days').format("YYYY-MM-DD")}'></td>`
+					);
+					break;
+				case 1:
+					$('.week_body_row').append(
+						`<td class='week_times' data-index='${moment(currDate).subtract(2, 'days').format("YYYY-MM-DD")}'></td>`
+					);
+					break;
+				case 2:
+					$('.week_body_row').append(
+						`<td class='week_times' data-index='${moment(currDate).subtract(1, 'days').format("YYYY-MM-DD")}'></td>`
+					);
+					break;
+				case 3:
+					$('.week_body_row').append(
+						`<td class='week_times' data-index='${moment(currDate).format("YYYY-MM-DD")}'></td>`
+					);
+					break;
+				case 4:
+					$('.week_body_row').append(
+						`<td class='week_times' data-index='${moment(currDate).add(1, 'days').format("YYYY-MM-DD")}'></td>`
+					);
+					break;
+				case 5:
+					$('.week_body_row').append(
+						`<td class='week_times' data-index='${moment(currDate).add(2, 'days').format("YYYY-MM-DD")}'></td>`
+					);
+					break;
+				case 6:
+					$('.week_body_row').append(
+						`<td class='week_times' data-index='${moment(currDate).add(3, 'days').format("YYYY-MM-DD")}'></td>`
+					);
+					break;
+			}
 		}
 	}
-
 	function weeklyCalendar(next){
 		var calendar = $('.week_dates');//place to inject month days
 		var currDate = queryDate;//from ejs <script>
 
 
 		if(next){
-				if(next === 'prev'){
-					window.location.replace(window.location.origin +
-						window.location.pathname + '?date=' +
-						moment(queryDate).subtract(7,'days').format('YYYY-MM-DD'))
-				}
-				else if(next === 'next'){
-					// $(location).attr('href', 'http://stackoverflow.com') //the
-					window.location.replace(window.location.origin +
-						window.location.pathname + '?date=' +
-						moment(queryDate).add(7,'days').format('YYYY-MM-DD'))
-
-				}
+			if(next === 'prev'){
+				window.location.replace(window.location.origin +
+					window.location.pathname + '?date=' +
+					moment(queryDate).subtract(7,'days').format('YYYY-MM-DD'))
+			}
+			else if(next === 'next'){
+				// $(location).attr('href', 'http://stackoverflow.com') //the
+				window.location.replace(window.location.origin +
+					window.location.pathname + '?date=' +
+					moment(queryDate).add(7,'days').format('YYYY-MM-DD'))
 
 			}
+
+		}
 		$.each(calendar, function(index, day){
 			day.innerHTML = '';
 			//TODO remove switch statement, make better
@@ -302,7 +341,6 @@ $( document ).ready(function() {
 					day.innerHTML = `${moment(currDate).subtract(1, 'days').format('dddd Do')}`;
 					break;
 				case 3:
-					console.log(moment(currDate))
 					day.innerHTML = `${moment(currDate).format('dddd Do')}`;
 					break;
 				case 4:
@@ -317,7 +355,97 @@ $( document ).ready(function() {
 			}
 		});
 	}
+	function loadEvents(){
+		$.ajax({//GET
+			method: "GET",
+			url: `/events?date=${queryDate}`
+		}).done(function(data) {
+			weeklyEvents = data.data;
 
+			// console.log(moment('2016-12-01T21:00:00.000Z').format('hh a'))
+			// console.log(moment('2016-12-01T21:00:00.000Z').add(0, 'hours').format('hh a'))
+			// console.log(moment('2016-12-01T21:00:00.000Z').add(1, 'hours').format('hh a'))
+
+			weeklyEvents.forEach(function(event){
+				var startDate = moment(event.startDate).utcOffset(0);
+				var endDate = moment(event.endDate).utcOffset(0);
+
+
+
+				for(var i = 0; i < moment(endDate).diff(moment(startDate), 'hours'); i++){
+					$('[data-time="'+moment(startDate).add(i, 'hours').format('hh a')+'"]')
+						.siblings('[data-index="'+ moment(startDate).format("YYYY-MM-DD") +'"]')
+						.addClass('week_event')
+				}
+			});
+		}).fail(function(xhr){
+			console.log(xhr);
+			// var res = JSON.parse(xhr.responseText);
+			// alert(res.error.message || res.error.errmsg)
+		});
+	}
+	function weekDateListeners(){
+		var weekDates = document.querySelectorAll(".week_times");//each day box
+
+		weekDates.forEach(function(day){
+			day.addEventListener('click',function(e){
+				var _date = e.target.dataset.index;
+				getEvents.classList.add('sidebar-show');
+				overlay.classList.remove('hide');
+				eventData(_date)
+			});
+		});
+
+	}
+	function eventData(_date){
+		var events = $(".events");
+		console.log(_date)
+		events.empty();
+		$.ajax({//GET
+			method: "GET",
+			url: `/events/${_date}`,
+			success: function() {console.log('Success');},
+		}).done(function(event) {
+			console.log(event)
+			if(event.data){
+				for (var i = 0; i < event.data.length; i++){
+					//see if passed in date are equal to any of the DBs event dates
+					//format mongo date into yyyy-mm-dd
+					if(_date == dc.yyyymmdd(event.data[i].startDate)) {
+						//append to sidebar
+						events.append(`<div class='event'>
+											<div class="editable"  >
+												<div class='event-name'>
+													${event.data[i].title}
+												</div>
+												<div class='event-desc'>
+													${event.data[i].desc}
+												</div>
+												<div class='event-name'">
+													${moment(event.data[i].startDate).format('hh:mm a')} to
+												</div>
+												<div class='event-name' data-endDate="${event.data[i].endDate}">
+													${moment(event.data[i].endDate).format('hh:mm a')}
+												</div>
+												<button class='delete-event' id='${event.data[i]._id}'>Remove</button>
+												<button class='patch-event' 
+													id='${event.data[i]._id}' 
+													data-_date='${_date}'
+													data-title="${event.data[i].title}"
+													data-desc="${event.data[i].desc}"
+													data-startdate="${event.data[i].startDate}"
+													data-enddate="${event.data[i].endDate}">Update
+												</button>
+											</div>
+										</div>`)
+					}
+				}
+			}
+		}).fail(function(xhr){
+			var res = JSON.parse(xhr.responseText);
+			alert(res.error.message || res.error.errmsg)
+		})
+	}
 
 
 

@@ -352,10 +352,10 @@ $(document).ready(function(){
 													${event.data[i].desc}
 												</div>
 												<div class='event-name'">
-													${dc.jqformat(event.data[i].startDate)}
+													${moment(event.data[i].startDate).utcOffset(0).format('hh:mm a')} to
 												</div>
 												<div class='event-name' data-endDate="${event.data[i].endDate}">
-													${dc.jqformat(event.data[i].endDate)}
+													${moment(event.data[i].endDate).utcOffset(0).format('hh:mm a')}
 												</div>
 												<button class='delete-event' id='${event.data[i]._id}'>Remove</button>
 												<button class='patch-event' 

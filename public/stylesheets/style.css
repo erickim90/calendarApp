@@ -132,6 +132,9 @@ body{
 .week_header,.week_days,.week_times{
     color:white;
 }
+.week_event{
+    background-color:rgb(0,180,255);
+}
 /*!*daily.html*!*/
 /*#day_table{*/
     /*width:100%;*/
