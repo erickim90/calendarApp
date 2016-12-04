@@ -136,18 +136,29 @@ body{
     background-color:rgb(0,180,255);
 }
 /*!*daily.html*!*/
-/*#day_table{*/
-    /*width:100%;*/
-    /*background-color:rgba(0,0,255,.4);*/
-/*}*/
-/*.daily_dates{*/
-    /*color:black;*/
-    /*background-color:white;*/
-    /*border: 1px solid white;*/
-/*}*/
-/*.daily_header, .daily_day, .daily_times{*/
-    /*color:white;*/
-/*}*/
 
+#day_table{
+    margin: auto;
+    table-layout: fixed;
+    background-color:black;
+}
+.day_time{
+    width:10%
+}
+.day_hours{
+    width:100%;
+    color:white;
+    vertical-align: top;
+    background-color:grey;
+    border: 3px solid grey;
+    border-radius:5px;
+    transition: 1s background-color;
+}
+.day_header,.day_days{
+    color:white;
+}
+.day_event{
+    background-color:rgb(0,180,255);
+}
 
 

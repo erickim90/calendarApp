@@ -17,21 +17,15 @@
 </div>
 
 <div>
-    <table id="week_table">
-        <thead class="week_header">
-        <tr><th></th><th id="week" colspan="7"><%= dateHeader %></th></tr>
-        <tr id="week_days">
+    <table id="day_table">
+        <thead class="day_header">
+        <tr><th id="week" colspan="2"><%= dateHeader %></th></tr>
+        <tr id="day_days">
             <td class="text-center"> TIME </td>
-            <td class="text-center week_dates"> Sunday </td>
-            <td class="text-center week_dates"> Monday </td>
-            <td class="text-center week_dates"> Tuesday </td>
-            <td class="text-center week_dates"> Wednesday </td>
-            <td class="text-center week_dates"> Thursday </td>
-            <td class="text-center week_dates"> Friday </td>
-            <td class="text-center week_dates"> Saturday </td>
+            <td class="text-center day_date"> TODAY </td>
         </tr>
         </thead>
-        <tbody id="week_body">
+        <tbody id="day_body">
         </tbody>
     </table>
 </div>
@@ -110,13 +104,12 @@
 <div class="overlay hide"></div>
 
 <button class="create-event-btn">Create</button>
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
 <script src="http://momentjs.com/downloads/moment.js"></script>
 <script>
     //ejs
-     var queryDate = '<%= queryDate %>'
+    var queryDate = '<%= queryDate %>'
 </script>
-<script src="javascripts/weeklyScript.js"></script>
+<script src="javascripts/dailyScripts.js"></script>
 </body>
 </html>

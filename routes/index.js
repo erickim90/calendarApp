@@ -13,14 +13,23 @@ router.get('/weekly', function(req, res, next) {
   var querystring = req.query.date;
   var queryDate;
   var dateHeader;
-  if(req.query){
-    queryDate = moment(querystring).toISOString();//passed in
-  }
-  else{
-    queryDate = moment().toISOString();//curr
-  }
+  queryDate = moment(querystring).toISOString();
+  //passed in {} returns current date
+
   dateHeader = moment(queryDate).format('YYYY MMMM');
   res.render('weekly', {queryDate, dateHeader});
 });
+
+router.get('/daily', function(req, res, next) {
+  var querystring = req.query.date;
+  var queryDate;
+  var dateHeader;
+  queryDate = moment(querystring).toISOString();
+  //passed in {} returns current date
+
+  dateHeader = moment(queryDate).format('YYYY MMMM');
+  res.render('daily', {queryDate, dateHeader});
+});
+
 
 module.exports = router;

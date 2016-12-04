@@ -61,14 +61,13 @@ router.get('/', function(req, res) {
 	var output = {
 		status: 200
 	};
-	console.log(moment(req.query.date).startOf('day').add(3, 'day'));
-	console.log(moment(req.query.date).endOf('day').subtract(3, 'day'));
+
 	var query = {};
-	if(req.query){
+
+	if(JSON.stringify(req.query) !== '{}'){
 		query = { $and: [ { "startDate": { $lte: moment(req.query.date).startOf('day').add(3, 'day') } },
 						  { "startDate": { $gte: moment(req.query.date).endOf('day').subtract(3, 'day') } } ] }
 	}
-	// console.log(moment(req.params.eventdate))
 
 	EventModel.find(query,function(err,events){
 		if(err){
@@ -83,17 +82,18 @@ router.get('/', function(req, res) {
 	});
 });
 
-router.get('/:eventdate', function(req, res) {
+router.get('/oneday', function(req, res) {
 	var output = {
 		status: 200
 	};
-	var param  = moment(req.params.eventdate).startOf('day');
-	var param2 = moment(req.params.eventdate).endOf('day');
 
-	console.log(param,param2)
+	var query = {};
 
-	var	query = { $and: [ { "startDate": { $gte: param } },
-						  { "startDate": { $lte: param2 } } ] };
+	if(JSON.stringify(req.query) !== '{}'){
+		query = { $and: [ { "startDate": { $gte: moment(req.query.date).startOf('day') } },
+						  { "startDate": { $lte: moment(req.query.date).endOf('day') } } ] }
+	}
+
 	EventModel.find(query,function(err,events){
 		if(err){
 			output.status = 500;
@@ -101,7 +101,32 @@ router.get('/:eventdate', function(req, res) {
 			res.status(output.status).json(output);
 		}
 		else{
-			console.log(events)
+			output.data = events;
+			res.status(output.status).json(output)
+		}
+	});
+});
+
+
+
+router.get('/:eventdate', function(req, res) {
+	var output = {
+		status: 200
+	};
+
+	var param  = moment(req.params.eventdate).startOf('day');
+	var param2 = moment(req.params.eventdate).endOf('day');
+
+	var	query = { $and: [ { "startDate": { $gte: param } },
+						  { "startDate": { $lte: param2 } } ] };
+
+	EventModel.find(query,function(err,events){
+		if(err){
+			output.status = 500;
+			output.error = err;
+			res.status(output.status).json(output);
+		}
+		else{
 			output.data = events;
 			res.status(output.status).json(output)
 		}
@@ -114,6 +139,7 @@ router.post('/', function(req, res) {
 	};
 
 	var createEvent = new EventModel(req.body);
+
 	createEvent.dateValidate()//a promise
 		.then(function (resolve) {//on resolve
 			EventModel.create(req.body,function(err, event){
@@ -145,7 +171,7 @@ router.patch('/:_id', function(req, res) {
 	EventModel.findOne(req.params, function(err,doc){
 		updateobj.dateValidate()//a promise
 			.then(function (resolve) {//on resolve
-				EventModel.create(req.body,function(err, event){
+				EventModel.findOneAndUpdate(req.params, req.body,function(err, event){
 					if(err){
 						output.status = 500;
 						output.error = err;
@@ -185,8 +211,6 @@ router.patch('/:_id', function(req, res) {
 				}
 			});
 	});
-
-
 });
 
 router.delete('/:_id', function(req, res) {
