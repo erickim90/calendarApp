@@ -20,23 +20,17 @@ $( document ).ready(function() {
     });
     $('#createEventForm').submit(function (event) {
         event.preventDefault(); //prevent default action
-
-        var post_url = $(this).attr("action"); //get form action url
-        var request_method = $(this).attr("method"); //get form GET/POST method
         var form_data = $(this).serialize(); //Encode form elements for submission
-        // var form_data = {"title": "herpderp",  _id:"583debef0aedb4039849cd4c"};//ERROR THROWING FORM DATA
-
         $.ajax({//CREATE
-            url: post_url,
-            method: request_method,
+            url: '/events',
+            method: 'POST',
             data: form_data
         }).done(function (res) {
-            alert('event created')
+            alert(res.data.message);
+            eventData(moment(queryDate).format("YYYY-MM-DD"));
         }).fail(function (xhr) {
-            var res = JSON.parse(xhr.responseText);
-            alert(res.error.message || res.error.errmsg)
-        });
-
+            alert(xhr.responseJSON.data.message)
+        })
     });
     eventActions.on("click", ".delete-event", function (e) {
         var self = this;
@@ -53,7 +47,6 @@ $( document ).ready(function() {
     });
     eventActions.on("click", ".patch-event", function (e) {
         var event_id = e.currentTarget.id;
-        var event_date = e.currentTarget.dataset._date;
         var title = e.currentTarget.dataset.title;
         var startDate = e.currentTarget.dataset.startdate;
         var endDate = e.currentTarget.dataset.enddate;
@@ -69,14 +62,14 @@ $( document ).ready(function() {
     		<div class="margin-top-20 text-center">
     		  <div class="inline-block">
     		    <label for="startDate">Start Time: </label>
-    		    <input class="form-element" type="datetime-local" name="startDate" id="startDate" value="${startDate.slice(0, -1)}"/>
+    		    <input class="form-element" type="datetime-local" name="startDate" id="startDate"/>
     		  </div>
     		</div>
 
     		<div class="margin-top-20 text-center">
     		  <div class="inline-block">
     		    <label for="endDate">End Time: </label>
-    		    <input class="form-element" type="datetime-local" name="endDate" id="endDate" value="${endDate.slice(0, -1)}"/>
+    		    <input class="form-element" type="datetime-local" name="endDate" id="endDate">
     		  </div>
     		</div>
     		<div class="margin-top-20 text-center">
@@ -117,29 +110,21 @@ $( document ).ready(function() {
 		    <button type="submit">Submit</button>
 
   		</form>`);
-        //spawn a modal
         $('#edit-form').submit(function (event) {
             event.preventDefault(); //prevent default action
-
-            var post_url = $(this).attr("action"); //get form action url
-            var request_method = $(this).attr("method"); //get form GET/POST method
             var form_data = $(this).serialize(); //Encode form elements for submission
-            // var form_data = {"title": "herpderp",  _id:"583debef0aedb4039849cd4c"};//ERROR THROWING FORM DATA
 
             $.ajax({//CREATE
-                url: post_url,
-                method: request_method,
+                url: `events/${event_id}`,
+                method: 'patch',
                 data: form_data
             }).done(function (res) {
-                console.log(res);
-                eventData(event_date);
+                alert(res.data.message);
+                eventData(moment(queryDate).format("YYYY-MM-DD"));
             }).fail(function (xhr) {
-                var res = JSON.parse(xhr.responseText);
-                alert(res.error.message || res.error.errmsg)
+                alert(xhr.responseJSON.data.message)
             })
         })
-
-
     });
 
     //daily
@@ -193,16 +178,11 @@ $( document ).ready(function() {
             method: "GET",
             url: `/events/oneday?date=${queryDate}`
         }).done(function(data) {
-            console.log(data)
             dayEvents = data.data;
 
-            // console.log(moment('2016-12-01T21:00:00.000Z').format('hh a'))
-            // console.log(moment('2016-12-01T21:00:00.000Z').add(0, 'hours').format('hh a'))
-            // console.log(moment('2016-12-01T21:00:00.000Z').add(1, 'hours').format('hh a'))
-
             dayEvents.forEach(function(event){
-                var startDate = moment(event.startDate).utcOffset(0);
-                var endDate = moment(event.endDate).utcOffset(0);
+                var startDate = moment(event.startDate);
+                var endDate = moment(event.endDate);
 
                 for(var i = 0; i < moment(endDate).diff(moment(startDate), 'hours'); i++){
                     $('[data-time="'+moment(startDate).add(i, 'hours').format('hh a')+'"]')
@@ -212,8 +192,8 @@ $( document ).ready(function() {
             });
         }).fail(function(xhr){
             console.log(xhr);
-            // var res = JSON.parse(xhr.responseText);
-            // alert(res.error.message || res.error.errmsg)
+            var res = JSON.parse(xhr.responseText);
+            alert(res.error.message || res.error.errmsg)
         });
     }
     function DateListeners(){
@@ -235,14 +215,17 @@ $( document ).ready(function() {
         events.empty();
         $.ajax({//GET
             method: "GET",
-            url: `/events/${_date}`,
-            success: function() {console.log('Success');},
+            url: `/events/${_date}`
         }).done(function(event) {
-            console.log(event)
             if(event.data){
                 for (var i = 0; i < event.data.length; i++){
                     //see if passed in date are equal to any of the DBs event dates
                     //format mongo date into yyyy-mm-dd
+                    console.log(moment(_date).isBetween(
+                        moment(event.data[i].startDate).startOf('day'),
+                        moment(event.data[i].startDate).endOf('day')
+                    ))
+
                     if(_date == moment(event.data[i].startDate).format("YYYY-MM-DD")) {
                         //append to sidebar
                         events.append(`<div class='event'>

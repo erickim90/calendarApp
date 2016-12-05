@@ -16,47 +16,42 @@ $(document).ready(function(){
 		createEvents.classList.add('sidebar-show');
 		overlay.classList.remove('hide');
 	});
-	$('#createEventForm').submit(function(event){
+	$('#createEventForm').submit(function (event) {
 		event.preventDefault(); //prevent default action
-
-		var post_url       = $(this).attr("action"); //get form action url
-		var request_method = $(this).attr("method"); //get form GET/POST method
-		var form_data      = $(this).serialize(); //Encode form elements for submission
-		// var form_data = {"title": "herpderp",  _id:"583debef0aedb4039849cd4c"};//ERROR THROWING FORM DATA
-
+		var form_data = $(this).serialize(); //Encode form elements for submission
 		$.ajax({//CREATE
-			url : post_url,
-			method: request_method,
-			data : form_data
+			url: '/events',
+			method: 'POST',
+			data: form_data
+		}).done(function (res) {
+			alert(res.data.message);
+			eventData(moment(queryDate).format("YYYY-MM-DD"));
+		}).fail(function (xhr) {
+			alert(xhr.responseJSON.data.message)
+		})
+	});
+	eventActions.on( "click", ".delete-event", function(e) {
+		var self = this;
+		var event_id = e.currentTarget.id;
+		$.ajax({//DELETE
+			url : `events/${event_id}`,
+			method: 'delete'
 		}).done(function(res){
-			alert('event created')
+			console.log(res)
+			$( self ).parent().remove()
 		}).fail(function(xhr){
 			var res = JSON.parse(xhr.responseText);
 			alert(res.error.message || res.error.errmsg)
 		})
 	});
-		eventActions.on( "click", ".delete-event", function(e) {
-			var self = this;
-			var event_id = e.currentTarget.id;
-			$.ajax({//DELETE
-				url : `events/${event_id}`,
-				method: 'delete'
-			}).done(function(res){
-				console.log(res)
-				$( self ).parent().remove()
-			}).fail(function(xhr){
-				var res = JSON.parse(xhr.responseText);
-				alert(res.error.message || res.error.errmsg)
-			})
-		});
-		eventActions.on( "click", ".patch-event", function(e) {
-			var event_id = e.currentTarget.id;
-			var event_date = e.currentTarget.dataset._date;
-			var title = e.currentTarget.dataset.title;
-			var startDate = e.currentTarget.dataset.startdate;
-			var endDate = e.currentTarget.dataset.enddate;
-			var desc = e.currentTarget.dataset.desc;
-			$(this).parent().empty().append(`<form id="edit-form" method="patch" action="/events/${event_id}">
+	eventActions.on( "click", ".patch-event", function(e) {
+		var event_id = e.currentTarget.id;
+		var event_date = e.currentTarget.dataset._date;
+		var title = e.currentTarget.dataset.title;
+		var startDate = e.currentTarget.dataset.startdate;
+		var endDate = e.currentTarget.dataset.enddate;
+		var desc = e.currentTarget.dataset.desc;
+		$(this).parent().empty().append(`<form id="edit-form" method="patch" action="/events/${event_id}">
     		<h4 class="margin-0">Edit Event</h4>
 
     		<div class="margin-top-20 text-center">
@@ -67,14 +62,14 @@ $(document).ready(function(){
     		<div class="margin-top-20 text-center">
     		  <div class="inline-block">
     		    <label for="startDate">Start Time: </label>
-    		    <input class="form-element" type="datetime-local" name="startDate" id="startDate" value="${startDate.slice(0, -1)}"/>
+    		    <input class="form-element" type="datetime-local" name="startDate" id="startDate"/>
     		  </div>
     		</div>
 
     		<div class="margin-top-20 text-center">
     		  <div class="inline-block">
     		    <label for="endDate">End Time: </label>
-    		    <input class="form-element" type="datetime-local" name="endDate" id="endDate" value="${endDate.slice(0, -1)}"/>
+    		    <input class="form-element" type="datetime-local" name="endDate" id="endDate">
     		  </div>
     		</div>
     		<div class="margin-top-20 text-center">
@@ -115,30 +110,22 @@ $(document).ready(function(){
 		    <button type="submit">Submit</button>
 
   		</form>`);
-			//spawn a modal
-			$('#edit-form').submit(function(event){
-				event.preventDefault(); //prevent default action
+		$('#edit-form').submit(function (event) {
+			event.preventDefault(); //prevent default action
+			var form_data = $(this).serialize(); //Encode form elements for submission
 
-				var post_url       = $(this).attr("action"); //get form action url
-				var request_method = $(this).attr("method"); //get form GET/POST method
-				var form_data      = $(this).serialize(); //Encode form elements for submission
-				// var form_data = {"title": "herpderp",  _id:"583debef0aedb4039849cd4c"};//ERROR THROWING FORM DATA
-
-				$.ajax({//CREATE
-					url : post_url,
-					method: request_method,
-					data : form_data
-				}).done(function(res){
-					console.log(res);
-					eventData(event_date);
-				}).fail(function(xhr){
-					var res = JSON.parse(xhr.responseText);
-					alert(res.error.message || res.error.errmsg)
-				})
+			$.ajax({//CREATE
+				url: `events/${event_id}`,
+				method: 'patch',
+				data: form_data
+			}).done(function (res) {
+				alert(res.data.message);
+				eventData(moment(queryDate).format("YYYY-MM-DD"));
+			}).fail(function (xhr) {
+				alert(xhr.responseJSON.data.message)
 			})
-
-
-		});
+		})
+	});
 	function DateConstruct(){
 		var d = ['sun','mon','tue','wed','thu','fri','sat'];
 		var m  = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
@@ -334,14 +321,13 @@ $(document).ready(function(){
 		//get events and load to sidebar
 		$.ajax({//GET
 			method: "GET",
-			url: "/events",
-			success: function() {console.log('Success');},
+			url: "/events"
 		}).done(function(event) {
 			if(event.data){
 				for (var i = 0; i < event.data.length; i++){
 					//see if passed in date are equal to any of the DBs event dates
 					//format mongo date into yyyy-mm-dd
-					if(_date == dc.yyyymmdd(event.data[i].startDate)) {
+					if(_date == moment(event.data[i].startDate).format("YYYY-MM-DD")) {
 						//append to sidebar
 						events.append(`<div class='event'>
 											<div class="editable"  >
@@ -352,10 +338,10 @@ $(document).ready(function(){
 													${event.data[i].desc}
 												</div>
 												<div class='event-name'">
-													${moment(event.data[i].startDate).utcOffset(0).format('hh:mm a')} to
+													${moment(event.data[i].startDate).format('hh:mm a')} to
 												</div>
 												<div class='event-name' data-endDate="${event.data[i].endDate}">
-													${moment(event.data[i].endDate).utcOffset(0).format('hh:mm a')}
+													${moment(event.data[i].endDate).format('hh:mm a')}
 												</div>
 												<button class='delete-event' id='${event.data[i]._id}'>Remove</button>
 												<button class='patch-event' 
@@ -379,11 +365,10 @@ $(document).ready(function(){
 	function loadEvents(){
 		$.ajax({//GET
 			method: "GET",
-			url: "/events",
-			success: function() {console.log('Success');},
+			url: "/events"
 		}).done(function(event) {
 			for (var i = 0; i < event.data.length; i++){
-				var eventDate = dc.yyyymmdd(event.data[i].startDate);
+				var eventDate = moment(event.data[i].startDate).format("YYYY-MM-DD");
 				var month = $('.month_dates');
 				month.each(function(day){
 					if($(this).attr('data-_date') == eventDate){

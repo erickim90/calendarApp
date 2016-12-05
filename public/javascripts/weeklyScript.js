@@ -22,25 +22,19 @@ $( document ).ready(function() {
 		createEvents.classList.add('sidebar-show');
 		overlay.classList.remove('hide');
 	});
-	$('#createEventForm').submit(function(event){
+	$('#createEventForm').submit(function (event) {
 		event.preventDefault(); //prevent default action
-
-		var post_url       = $(this).attr("action"); //get form action url
-		var request_method = $(this).attr("method"); //get form GET/POST method
-		var form_data      = $(this).serialize(); //Encode form elements for submission
-		// var form_data = {"title": "herpderp",  _id:"583debef0aedb4039849cd4c"};//ERROR THROWING FORM DATA
-
+		var form_data = $(this).serialize(); //Encode form elements for submission
 		$.ajax({//CREATE
-			url : post_url,
-			method: request_method,
-			data : form_data
-		}).done(function(res){
-			alert('event created')
-		}).fail(function(xhr){
-			var res = JSON.parse(xhr.responseText);
-			alert(res.error.message || res.error.errmsg)
-		});
-
+			url: '/events',
+			method: 'POST',
+			data: form_data
+		}).done(function (res) {
+			alert(res.data.message);
+			eventData(moment(queryDate).format("YYYY-MM-DD"));
+		}).fail(function (xhr) {
+			alert(xhr.responseJSON.data.message)
+		})
 	});
 	eventActions.on( "click", ".delete-event", function(e) {
 		var self = this;
@@ -73,14 +67,14 @@ $( document ).ready(function() {
     		<div class="margin-top-20 text-center">
     		  <div class="inline-block">
     		    <label for="startDate">Start Time: </label>
-    		    <input class="form-element" type="datetime-local" name="startDate" id="startDate" value="${startDate.slice(0, -1)}"/>
+    		    <input class="form-element" type="datetime-local" name="startDate" id="startDate"/>
     		  </div>
     		</div>
 
     		<div class="margin-top-20 text-center">
     		  <div class="inline-block">
     		    <label for="endDate">End Time: </label>
-    		    <input class="form-element" type="datetime-local" name="endDate" id="endDate" value="${endDate.slice(0, -1)}"/>
+    		    <input class="form-element" type="datetime-local" name="endDate" id="endDate">
     		  </div>
     		</div>
     		<div class="margin-top-20 text-center">
@@ -121,29 +115,21 @@ $( document ).ready(function() {
 		    <button type="submit">Submit</button>
 
   		</form>`);
-		//spawn a modal
-		$('#edit-form').submit(function(event){
+		$('#edit-form').submit(function (event) {
 			event.preventDefault(); //prevent default action
-
-			var post_url       = $(this).attr("action"); //get form action url
-			var request_method = $(this).attr("method"); //get form GET/POST method
-			var form_data      = $(this).serialize(); //Encode form elements for submission
-			// var form_data = {"title": "herpderp",  _id:"583debef0aedb4039849cd4c"};//ERROR THROWING FORM DATA
+			var form_data = $(this).serialize(); //Encode form elements for submission
 
 			$.ajax({//CREATE
-				url : post_url,
-				method: request_method,
-				data : form_data
-			}).done(function(res){
-				console.log(res);
-				eventData(event_date);
-			}).fail(function(xhr){
-				var res = JSON.parse(xhr.responseText);
-				alert(res.error.message || res.error.errmsg)
+				url: `events/${event_id}`,
+				method: 'patch',
+				data: form_data
+			}).done(function (res) {
+				alert(res.data.message);
+				eventData(moment(queryDate).format("YYYY-MM-DD"));
+			}).fail(function (xhr) {
+				alert(xhr.responseJSON.data.message)
 			})
 		})
-
-
 	});
 	function DateConstruct(){
 		var d = ['sun','mon','tue','wed','thu','fri','sat'];
@@ -310,7 +296,6 @@ $( document ).ready(function() {
 		var calendar = $('.week_dates');//place to inject month days
 		var currDate = queryDate;//from ejs <script>
 
-
 		if(next){
 			if(next === 'prev'){
 				window.location.replace(window.location.origin +
@@ -362,15 +347,9 @@ $( document ).ready(function() {
 		}).done(function(data) {
 			weeklyEvents = data.data;
 
-			// console.log(moment('2016-12-01T21:00:00.000Z').format('hh a'))
-			// console.log(moment('2016-12-01T21:00:00.000Z').add(0, 'hours').format('hh a'))
-			// console.log(moment('2016-12-01T21:00:00.000Z').add(1, 'hours').format('hh a'))
-
 			weeklyEvents.forEach(function(event){
-				var startDate = moment(event.startDate).utcOffset(0);
-				var endDate = moment(event.endDate).utcOffset(0);
-
-
+				var startDate = moment(event.startDate);
+				var endDate = moment(event.endDate);
 
 				for(var i = 0; i < moment(endDate).diff(moment(startDate), 'hours'); i++){
 					$('[data-time="'+moment(startDate).add(i, 'hours').format('hh a')+'"]')
@@ -380,8 +359,8 @@ $( document ).ready(function() {
 			});
 		}).fail(function(xhr){
 			console.log(xhr);
-			// var res = JSON.parse(xhr.responseText);
-			// alert(res.error.message || res.error.errmsg)
+			var res = JSON.parse(xhr.responseText);
+			alert(res.error.message || res.error.errmsg)
 		});
 	}
 	function weekDateListeners(){
@@ -406,12 +385,11 @@ $( document ).ready(function() {
 			url: `/events/${_date}`,
 			success: function() {console.log('Success');},
 		}).done(function(event) {
-			console.log(event)
 			if(event.data){
 				for (var i = 0; i < event.data.length; i++){
 					//see if passed in date are equal to any of the DBs event dates
 					//format mongo date into yyyy-mm-dd
-					if(_date == dc.yyyymmdd(event.data[i].startDate)) {
+					if(_date == moment(event.data[i].startDate).format("YYYY-MM-DD")) {
 						//append to sidebar
 						events.append(`<div class='event'>
 											<div class="editable"  >

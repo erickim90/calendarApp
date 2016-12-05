@@ -20,6 +20,8 @@ eventSchema.methods.dateValidate = function(){
 	var that = this;
 	//create a new promise
 	return new Promise(function(resolve, reject) {
+		var response = {};
+
 		that.model('event')
 			.find({
 				$or :[
@@ -29,14 +31,16 @@ eventSchema.methods.dateValidate = function(){
 			})
 			.then(function (result) {
 				if(result.length === 0){
-						resolve('No Conflicts!');
+					response.result = true;
+					response.message = 'Date is Valid, No conflicts';
+					response.data = result;
+					resolve(response);
 				}
 				else{
-					var obj = {
-						message : "Cant's create, conflict found!",
-						data : result
-					};
-					reject(obj);
+					response.result = false;
+					response.message = "Cant's create, Conflict found!";
+					response.data = result;
+					reject(response);
 				}
 			});
 	});
@@ -44,31 +48,20 @@ eventSchema.methods.dateValidate = function(){
 
 var EventModel = mongoose.model('event', eventSchema);
 
-router.post('/test', function(req, res) {
-	var eric = new EventModel(req.body);
-
-	eric.dateValidate()//a promise
-		.then(function (resolve) {//on resolve
-			res.send(resolve)
-		})
-		.catch(function (reject) {//on reject/catch
-			res.send(reject)
-		});
-});
-
 /* Events */
 router.get('/', function(req, res) {
 	var output = {
 		status: 200
 	};
-
 	var query = {};
-
+	console.log(moment(req.query.date).endOf('day').subtract(3, 'day'))
+	console.log(moment(req.query.date).startOf('day').add(3, 'day'))
+	//if querystring is passed, this is a weekly request so send +/- 3 days for the week
 	if(JSON.stringify(req.query) !== '{}'){
-		query = { $and: [ { "startDate": { $lte: moment(req.query.date).startOf('day').add(3, 'day') } },
-						  { "startDate": { $gte: moment(req.query.date).endOf('day').subtract(3, 'day') } } ] }
+		query = { $and: [ { "startDate": { $lte: moment(req.query.date).endOf('day').add(3, 'day') } },
+						  { "startDate": { $gte: moment(req.query.date).startOf('day').subtract(3, 'day') } } ] }
 	}
-
+	//else querystring is {} and will return all documents
 	EventModel.find(query,function(err,events){
 		if(err){
 			output.status = 500;
@@ -76,6 +69,7 @@ router.get('/', function(req, res) {
 			res.status(output.status).json(output);
 		}
 		else{
+			console.log(events)
 			output.data = events;
 			res.status(output.status).json(output)
 		}
@@ -86,13 +80,11 @@ router.get('/oneday', function(req, res) {
 	var output = {
 		status: 200
 	};
-
-	var query = {};
-
-	if(JSON.stringify(req.query) !== '{}'){
-		query = { $and: [ { "startDate": { $gte: moment(req.query.date).startOf('day') } },
-						  { "startDate": { $lte: moment(req.query.date).endOf('day') } } ] }
-	}
+	//A querystring must be provided in
+	var queryStart = moment(req.query.date).startOf('day');
+	var queryEnd = moment(req.query.date).endOf('day');
+	var query = { $and: [ { "startDate": { $gte: queryStart } },
+						  { "startDate": { $lte: queryEnd } } ] };
 
 	EventModel.find(query,function(err,events){
 		if(err){
@@ -101,24 +93,24 @@ router.get('/oneday', function(req, res) {
 			res.status(output.status).json(output);
 		}
 		else{
+			console.log(events)
 			output.data = events;
 			res.status(output.status).json(output)
 		}
 	});
 });
 
-
-
 router.get('/:eventdate', function(req, res) {
 	var output = {
 		status: 200
 	};
 
-	var param  = moment(req.params.eventdate).startOf('day');
-	var param2 = moment(req.params.eventdate).endOf('day');
+	console.log(moment(req.params.eventdate).startOf('day'))
+	console.log(moment(req.params.eventdate).endOf('day'))
 
-	var	query = { $and: [ { "startDate": { $gte: param } },
-						  { "startDate": { $lte: param2 } } ] };
+	//the parameter must be a date (YYYY-MM-DD)
+	var	query = { $and: [ { "startDate": { $gte: moment(req.params.eventdate).startOf('day') } },
+						  { "startDate": { $lte: moment(req.params.eventdate).endOf('day') } } ] };
 
 	EventModel.find(query,function(err,events){
 		if(err){
@@ -138,6 +130,9 @@ router.post('/', function(req, res) {
 		status: 200
 	};
 
+	req.body.startDate = moment(req.body.startDate).toISOString();
+	req.body.endDate = moment(req.body.endDate).toISOString();
+
 	var createEvent = new EventModel(req.body);
 
 	createEvent.dateValidate()//a promise
@@ -150,14 +145,15 @@ router.post('/', function(req, res) {
 				}
 				else {
 					output.status = 201;
-					output.data = event;
+					output.data = resolve;
+					console.log(resolve);
 					res.status(output.status).json(output)
 				}
 			});
 		})
 		.catch(function (reject) {//on reject/catch
 			output.status = 500;
-			output.error = reject;
+			output.data = reject;
 			res.status(output.status).json(output);
 		});
 });
@@ -166,6 +162,13 @@ router.patch('/:_id', function(req, res) {
 	var output = {
 		status: 200
 	};
+
+	req.body.startDate = moment(req.body.startDate).toISOString();
+	req.body.endDate = moment(req.body.endDate).toISOString();
+
+	console.log(req.body.startDate)
+	console.log(req.body.endDate)
+
 	var updateobj = new EventModel(req.body);
 
 	EventModel.findOne(req.params, function(err,doc){
@@ -178,6 +181,7 @@ router.patch('/:_id', function(req, res) {
 						res.status(output.status).json(output);
 					}
 					else {
+						console.log('resolved')
 						output.status = 201;
 						output.data = event;
 						res.status(output.status).json(resolve)
@@ -186,7 +190,7 @@ router.patch('/:_id', function(req, res) {
 			})
 			.catch(function (reject) {//on reject/catch\
 				var rejectEvent   =  null;
-
+				console.log('rejected')
 				reject.data.forEach(function(event){
 					if(reject.data.length > 1){
 						rejectEvent = true
@@ -196,6 +200,7 @@ router.patch('/:_id', function(req, res) {
 						else{rejectEvent = false}
 					}
 				});
+				console.log(rejectEvent);
 				if(rejectEvent){
 					output.status = 500;
 					output.error = reject;
