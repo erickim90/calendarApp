@@ -54,8 +54,6 @@ router.get('/', function(req, res) {
 		status: 200
 	};
 	var query = {};
-	console.log(moment(req.query.date).endOf('day').subtract(3, 'day'))
-	console.log(moment(req.query.date).startOf('day').add(3, 'day'))
 	//if querystring is passed, this is a weekly request so send +/- 3 days for the week
 	if(JSON.stringify(req.query) !== '{}'){
 		query = { $and: [ { "startDate": { $lte: moment(req.query.date).endOf('day').add(3, 'day') } },
@@ -69,7 +67,6 @@ router.get('/', function(req, res) {
 			res.status(output.status).json(output);
 		}
 		else{
-			console.log(events)
 			output.data = events;
 			res.status(output.status).json(output)
 		}
@@ -93,7 +90,6 @@ router.get('/oneday', function(req, res) {
 			res.status(output.status).json(output);
 		}
 		else{
-			console.log(events)
 			output.data = events;
 			res.status(output.status).json(output)
 		}
@@ -104,9 +100,6 @@ router.get('/:eventdate', function(req, res) {
 	var output = {
 		status: 200
 	};
-
-	console.log(moment(req.params.eventdate).startOf('day'))
-	console.log(moment(req.params.eventdate).endOf('day'))
 
 	//the parameter must be a date (YYYY-MM-DD)
 	var	query = { $and: [ { "startDate": { $gte: moment(req.params.eventdate).startOf('day') } },
@@ -145,14 +138,13 @@ router.post('/', function(req, res) {
 				}
 				else {
 					output.status = 201;
-					output.data = resolve;
-					console.log(resolve);
+					output.data = event;
 					res.status(output.status).json(output)
 				}
 			});
 		})
 		.catch(function (reject) {//on reject/catch
-			output.status = 500;
+			output.status = 409;
 			output.data = reject;
 			res.status(output.status).json(output);
 		});
@@ -166,9 +158,6 @@ router.patch('/:_id', function(req, res) {
 	req.body.startDate = moment(req.body.startDate).toISOString();
 	req.body.endDate = moment(req.body.endDate).toISOString();
 
-	console.log(req.body.startDate)
-	console.log(req.body.endDate)
-
 	var updateobj = new EventModel(req.body);
 
 	EventModel.findOne(req.params, function(err,doc){
@@ -181,7 +170,6 @@ router.patch('/:_id', function(req, res) {
 						res.status(output.status).json(output);
 					}
 					else {
-						console.log('resolved')
 						output.status = 201;
 						output.data = event;
 						res.status(output.status).json(resolve)
@@ -190,7 +178,6 @@ router.patch('/:_id', function(req, res) {
 			})
 			.catch(function (reject) {//on reject/catch\
 				var rejectEvent   =  null;
-				console.log('rejected')
 				reject.data.forEach(function(event){
 					if(reject.data.length > 1){
 						rejectEvent = true
@@ -200,7 +187,6 @@ router.patch('/:_id', function(req, res) {
 						else{rejectEvent = false}
 					}
 				});
-				console.log(rejectEvent);
 				if(rejectEvent){
 					output.status = 500;
 					output.error = reject;

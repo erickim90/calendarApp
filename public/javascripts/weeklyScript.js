@@ -358,7 +358,6 @@ $( document ).ready(function() {
 				}
 			});
 		}).fail(function(xhr){
-			console.log(xhr);
 			var res = JSON.parse(xhr.responseText);
 			alert(res.error.message || res.error.errmsg)
 		});
@@ -378,12 +377,11 @@ $( document ).ready(function() {
 	}
 	function eventData(_date){
 		var events = $(".events");
-		console.log(_date)
 		events.empty();
 		$.ajax({//GET
 			method: "GET",
 			url: `/events/${_date}`,
-			success: function() {console.log('Success');},
+			success: function() {},
 		}).done(function(event) {
 			if(event.data){
 				for (var i = 0; i < event.data.length; i++){

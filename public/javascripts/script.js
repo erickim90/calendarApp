@@ -24,8 +24,9 @@ $(document).ready(function(){
 			method: 'POST',
 			data: form_data
 		}).done(function (res) {
-			alert(res.data.message);
 			eventData(moment(queryDate).format("YYYY-MM-DD"));
+			$('[data-_date="'+moment(res.data.startDate).format("YYYY-MM-DD")+'"]')
+			.append(`<p style="font-size:10px;">${res.data.title}</p>`)
 		}).fail(function (xhr) {
 			alert(xhr.responseJSON.data.message)
 		})
@@ -37,7 +38,6 @@ $(document).ready(function(){
 			url : `events/${event_id}`,
 			method: 'delete'
 		}).done(function(res){
-			console.log(res)
 			$( self ).parent().remove()
 		}).fail(function(xhr){
 			var res = JSON.parse(xhr.responseText);
