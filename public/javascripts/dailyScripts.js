@@ -3,55 +3,55 @@
  */
 $( document ).ready(function() {
     //Required on all pages
-    var getEvents = document.querySelector(".get-events");
-    var eventActions = $(".get-events");
-    var createEvents = document.querySelector(".create-events");
-    var overlay = document.querySelector(".overlay");
-    var createBtn = document.querySelector(".create-event-btn");
+    var getEvents    = $(".get-events");
+    var createEvents = $(".create-events");
+    var overlay      = $(".overlay");
+    var createBtn    = $(".create-event-btn");
 
-    overlay.addEventListener('click', function () {
-        getEvents.classList.remove('sidebar-show');
-        createEvents.classList.remove('sidebar-show');
-        overlay.classList.add('hide');
+    overlay.on('click',function(){
+        getEvents.removeClass('sidebar-show');
+        createEvents.removeClass('sidebar-show');
+        overlay.addClass('hide');
     });
-    createBtn.addEventListener('click', function () {
-        createEvents.classList.add('sidebar-show');
-        overlay.classList.remove('hide');
+    createBtn.on('click', function(){
+        createEvents.addClass('sidebar-show');
+        overlay.removeClass('hide');
     });
     $('#createEventForm').submit(function (event) {
-        event.preventDefault(); //prevent default action
-        var form_data = $(this).serialize(); //Encode form elements for submission
-        $.ajax({//CREATE
+        event.preventDefault();
+        var form_data = $(this).serialize();
+        $.ajax({
             url: '/events',
             method: 'POST',
             data: form_data
         }).done(function (res) {
-            alert(res.data.message);
-            eventData(moment(queryDate).format("YYYY-MM-DD"));
+            console.log(res);
+            refreshData();
         }).fail(function (xhr) {
-            alert(xhr.responseJSON.data.message)
+            console.log(xhr);
+            alert(xhr.responseJSON.error.message);
         })
     });
-    eventActions.on("click", ".delete-event", function (e) {
-        var self = this;
+    getEvents.on( "click", ".delete-event", function(e) {
         var event_id = e.currentTarget.id;
-        $.ajax({//DELETE
-            url: `events/${event_id}`,
+        $.ajax({
+            url : `events/${event_id}`,
             method: 'delete'
-        }).done(function (res) {
-            $(self).parent().remove()
-        }).fail(function (xhr) {
-            var res = JSON.parse(xhr.responseText);
-            alert(res.error.message || res.error.errmsg)
+        }).done(function(res){
+            console.log(res);
+            refreshData();
+        }).fail(function(xhr){
+            console.log(xhr);
+            alert(xhr.responseJSON.error.message);
         })
     });
-    eventActions.on("click", ".patch-event", function (e) {
+    getEvents.on( "click", ".patch-event", function(e) {
         var event_id = e.currentTarget.id;
         var title = e.currentTarget.dataset.title;
         var startDate = e.currentTarget.dataset.startdate;
         var endDate = e.currentTarget.dataset.enddate;
         var desc = e.currentTarget.dataset.desc;
-        $(this).parent().empty().append(`<form id="edit-form" method="patch" action="/events/${event_id}">
+        $(this).parent().empty().append(`<form id="edit-form"">
     		<h4 class="margin-0">Edit Event</h4>
 
     		<div class="margin-top-20 text-center">
@@ -62,67 +62,86 @@ $( document ).ready(function() {
     		<div class="margin-top-20 text-center">
     		  <div class="inline-block">
     		    <label for="startDate">Start Time: </label>
-    		    <input class="form-element" type="datetime-local" name="startDate" id="startDate"/>
+    		    <input class="form-element" type="datetime-local" name="startDate" id="startDate" value="2016-12-12T08:00"/>
     		  </div>
     		</div>
 
     		<div class="margin-top-20 text-center">
     		  <div class="inline-block">
     		    <label for="endDate">End Time: </label>
-    		    <input class="form-element" type="datetime-local" name="endDate" id="endDate">
+    		    <input class="form-element" type="datetime-local" name="endDate" id="endDate" value="2016-12-12T12:00">
     		  </div>
     		</div>
     		<div class="margin-top-20 text-center">
     		  <label for="description">Description: </label>
     		  <textarea class="form-element" name="desc" placeholder="Description of event" id="description">${desc}</textarea>
     		</div>
-
-    		<!--<div class="margin-top-20 text-center">-->
-    		  <!--<label for="color">Color: </label>-->
-    		  <!--<select class="form-element" name="color" id="color">-->
-    		    <!--<option value="red">Red</option>-->
-    		    <!--<option value="blue">Blue</option>-->
-    		    <!--<option value="green">Green</option>-->
-    		  <!--</select>-->
-   			<!--</div>-->
-
-		    <!--<h5>Repeat</h5>-->
-		    <!--<div class="margin-top-20">-->
-		      <!--<input class="form-element" type="radio" name="repeat" value="None" checked>None-->
-		      <!--<input class="form-element" type="radio" name="repeat" value="Weekly">Weekly-->
-		      <!--<input class="form-element" type="radio" name="repeat" value="Monthly">Monthly-->
-		    <!--</div>-->
-
-		    <!--<div class="margin-top-20">-->
-		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="sun">Sun-->
-		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="mon">Mon-->
-		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="tue">Tue-->
-		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="wed">Wed-->
-		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="thur">Thu-->
-		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="fri">Fri-->
-		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="sat">Sat-->
-		    <!--</div>-->
-			<!---->
-		    <!--<div class="margin-top-20">-->
-		      <!--<h4>This event will repeat on the {date} of each month</h4>-->
-		    <!--</div>-->
-		
 		    <button type="submit">Submit</button>
-
   		</form>`);
         $('#edit-form').submit(function (event) {
             event.preventDefault(); //prevent default action
             var form_data = $(this).serialize(); //Encode form elements for submission
 
-            $.ajax({//CREATE
+            $.ajax({
                 url: `events/${event_id}`,
                 method: 'patch',
                 data: form_data
             }).done(function (res) {
-                alert(res.data.message);
-                eventData(moment(queryDate).format("YYYY-MM-DD"));
+                console.log(res);
+                refreshData();
             }).fail(function (xhr) {
-                alert(xhr.responseJSON.data.message)
+                console.log(xhr);
+                alert(xhr.responseJSON.error.message);
+            })
+        })
+    });
+    getEvents.on( "click", ".patch-event", function(e) {
+        var event_id = e.currentTarget.id;
+        var title = e.currentTarget.dataset.title;
+        var startDate = e.currentTarget.dataset.startdate;
+        var endDate = e.currentTarget.dataset.enddate;
+        var desc = e.currentTarget.dataset.desc;
+        $(this).parent().empty().append(`<form id="edit-form"">
+    		<h4 class="margin-0">Edit Event</h4>
+
+    		<div class="margin-top-20 text-center">
+    		  <label for="evtName">Event Name: </label>
+    		  <input class="form-element" type="text" name="title" placeholder="Name of Event" id="evtName" value="${title}"/>
+    		</div>
+
+    		<div class="margin-top-20 text-center">
+    		  <div class="inline-block">
+    		    <label for="startDate">Start Time: </label>
+    		    <input class="form-element" type="datetime-local" name="startDate" id="startDate" value="2016-12-12T08:00"/>
+    		  </div>
+    		</div>
+
+    		<div class="margin-top-20 text-center">
+    		  <div class="inline-block">
+    		    <label for="endDate">End Time: </label>
+    		    <input class="form-element" type="datetime-local" name="endDate" id="endDate" value="2016-12-12T12:00">
+    		  </div>
+    		</div>
+    		<div class="margin-top-20 text-center">
+    		  <label for="description">Description: </label>
+    		  <textarea class="form-element" name="desc" placeholder="Description of event" id="description">${desc}</textarea>
+    		</div>
+		    <button type="submit">Submit</button>
+  		</form>`);
+        $('#edit-form').submit(function (event) {
+            event.preventDefault(); //prevent default action
+            var form_data = $(this).serialize(); //Encode form elements for submission
+
+            $.ajax({
+                url: `events/${event_id}`,
+                method: 'patch',
+                data: form_data
+            }).done(function (res) {
+                console.log(res);
+                refreshData();
+            }).fail(function (xhr) {
+                console.log(xhr);
+                alert(xhr.responseJSON.error.message);
             })
         })
     });
@@ -202,8 +221,8 @@ $( document ).ready(function() {
         dayHours.forEach(function(day){
             day.addEventListener('click',function(e){
                 var _date = e.target.dataset.index;
-                getEvents.classList.add('sidebar-show');
-                overlay.classList.remove('hide');
+                getEvents.addClass('sidebar-show');
+                overlay.removeClass('hide');
                 console.log(_date)
                 eventData(_date);
             });
@@ -260,5 +279,15 @@ $( document ).ready(function() {
             var res = JSON.parse(xhr.responseText);
             alert(res.error.message || res.error.errmsg)
         })
+    }
+    function refreshData(){
+        $( ".day_hours" ).each(function() {
+            $( this ).removeClass("day_event");
+        });
+        dailyCalendar();
+        loadEvents();
+        getEvents.removeClass('sidebar-show');
+        createEvents.removeClass('sidebar-show');
+        overlay.addClass('hide');
     }
 });

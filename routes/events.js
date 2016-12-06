@@ -15,13 +15,13 @@ var eventSchema = new Schema({
 	desc: String
 });
 
-eventSchema.methods.dateValidate = function(){
+eventSchema.methods.dateValidate = function(id){
+	var doc_id = id || false;
 	//ensure 'this' is set to the new instance of User {username:'Eric'}
 	var that = this;
 	//create a new promise
 	return new Promise(function(resolve, reject) {
 		var response = {};
-
 		that.model('event')
 			.find({
 				$or :[
@@ -31,14 +31,24 @@ eventSchema.methods.dateValidate = function(){
 			})
 			.then(function (result) {
 				if(result.length === 0){
-					response.result = true;
 					response.message = 'Date is Valid, No conflicts';
 					response.data = result;
 					resolve(response);
 				}
+				else if(result.length === 1){
+					if(result[0].id.toString() == doc_id.toString()){
+						response.message = 'Date is Valid, Replacing event...';
+						response.data = result;
+						resolve(response);
+					}
+					else{
+						response.message = "Can't Edit, Date conflict found!";
+						response.data = result;
+						reject(response);
+					}
+				}
 				else{
-					response.result = false;
-					response.message = "Cant's create, Conflict found!";
+					response.message = "Can't Edit, Date conflict found!";
 					response.data = result;
 					reject(response);
 				}
@@ -119,6 +129,7 @@ router.get('/:eventdate', function(req, res) {
 });
 
 router.post('/', function(req, res) {
+	console.log('clucked')
 	var output = {
 		status: 200
 	};
@@ -137,6 +148,7 @@ router.post('/', function(req, res) {
 					res.status(output.status).json(output);
 				}
 				else {
+					output.result = resolve;
 					output.status = 201;
 					output.data = event;
 					res.status(output.status).json(output)
@@ -145,7 +157,7 @@ router.post('/', function(req, res) {
 		})
 		.catch(function (reject) {//on reject/catch
 			output.status = 409;
-			output.data = reject;
+			output.error = reject;
 			res.status(output.status).json(output);
 		});
 });
@@ -161,7 +173,7 @@ router.patch('/:_id', function(req, res) {
 	var updateobj = new EventModel(req.body);
 
 	EventModel.findOne(req.params, function(err,doc){
-		updateobj.dateValidate()//a promise
+		updateobj.dateValidate(doc._id)//a promise
 			.then(function (resolve) {//on resolve
 				EventModel.findOneAndUpdate(req.params, req.body,function(err, event){
 					if(err){
@@ -177,29 +189,9 @@ router.patch('/:_id', function(req, res) {
 				});
 			})
 			.catch(function (reject) {//on reject/catch\
-				var rejectEvent   =  null;
-				reject.data.forEach(function(event){
-					if(reject.data.length > 1){
-						rejectEvent = true
-					}
-					else if(event._id.toString() === req.params._id){
-						if(rejectEvent){}
-						else{rejectEvent = false}
-					}
-				});
-				if(rejectEvent){
-					output.status = 500;
-					output.error = reject;
-					res.status(output.status).json(output);
-				}
-				else{
-					EventModel.findOneAndUpdate(req.params, req.body, function(err,doc){
-						notSameId = false;
-						output.status = 201;
-						output.data = reject;
-						res.status(output.status).json(output)
-					})
-				}
+				output.status = 409;
+				output.error = reject;
+				res.status(output.status).json(output);
 			});
 	});
 });

@@ -6,57 +6,55 @@
  */
 $( document ).ready(function() {
 	//Required on all pages
-	var dc = new DateConstruct();//required
-	var getEvents    = document.querySelector(".get-events");
-	var eventActions = $(".get-events" );
-	var createEvents = document.querySelector(".create-events");
-	var overlay      = document.querySelector(".overlay");
-	var createBtn    = document.querySelector(".create-event-btn");
+	var getEvents    = $(".get-events");
+	var createEvents = $(".create-events");
+	var overlay      = $(".overlay");
+	var createBtn    = $(".create-event-btn");
 
-	overlay.addEventListener('click',function(){
-		getEvents.classList.remove('sidebar-show');
-		createEvents.classList.remove('sidebar-show');
-		overlay.classList.add('hide');
+	overlay.on('click',function(){
+		getEvents.removeClass('sidebar-show');
+		createEvents.removeClass('sidebar-show');
+		overlay.addClass('hide');
 	});
-	createBtn.addEventListener('click', function(){
-		createEvents.classList.add('sidebar-show');
-		overlay.classList.remove('hide');
+	createBtn.on('click', function(){
+		createEvents.addClass('sidebar-show');
+		overlay.removeClass('hide');
 	});
 	$('#createEventForm').submit(function (event) {
-		event.preventDefault(); //prevent default action
-		var form_data = $(this).serialize(); //Encode form elements for submission
-		$.ajax({//CREATE
+		event.preventDefault();
+		var form_data = $(this).serialize();
+		$.ajax({
 			url: '/events',
 			method: 'POST',
 			data: form_data
 		}).done(function (res) {
-			alert(res.data.message);
-			eventData(moment(queryDate).format("YYYY-MM-DD"));
+			console.log(res);
+			refreshData();
 		}).fail(function (xhr) {
-			alert(xhr.responseJSON.data.message)
+			console.log(xhr);
+			alert(xhr.responseJSON.error.message);
 		})
 	});
-	eventActions.on( "click", ".delete-event", function(e) {
-		var self = this;
+	getEvents.on( "click", ".delete-event", function(e) {
 		var event_id = e.currentTarget.id;
-		$.ajax({//DELETE
+		$.ajax({
 			url : `events/${event_id}`,
 			method: 'delete'
 		}).done(function(res){
-			$( self ).parent().remove()
+			console.log(res);
+			refreshData();
 		}).fail(function(xhr){
-			var res = JSON.parse(xhr.responseText);
-			alert(res.error.message || res.error.errmsg)
+			console.log(xhr);
+			alert(xhr.responseJSON.error.message);
 		})
 	});
-	eventActions.on( "click", ".patch-event", function(e) {
+	getEvents.on( "click", ".patch-event", function(e) {
 		var event_id = e.currentTarget.id;
-		var event_date = e.currentTarget.dataset._date;
 		var title = e.currentTarget.dataset.title;
 		var startDate = e.currentTarget.dataset.startdate;
 		var endDate = e.currentTarget.dataset.enddate;
 		var desc = e.currentTarget.dataset.desc;
-		$(this).parent().empty().append(`<form id="edit-form" method="patch" action="/events/${event_id}">
+		$(this).parent().empty().append(`<form id="edit-form"">
     		<h4 class="margin-0">Edit Event</h4>
 
     		<div class="margin-top-20 text-center">
@@ -67,176 +65,54 @@ $( document ).ready(function() {
     		<div class="margin-top-20 text-center">
     		  <div class="inline-block">
     		    <label for="startDate">Start Time: </label>
-    		    <input class="form-element" type="datetime-local" name="startDate" id="startDate"/>
+    		    <input class="form-element" type="datetime-local" name="startDate" id="startDate" value="2016-12-12T08:00"/>
     		  </div>
     		</div>
 
     		<div class="margin-top-20 text-center">
     		  <div class="inline-block">
     		    <label for="endDate">End Time: </label>
-    		    <input class="form-element" type="datetime-local" name="endDate" id="endDate">
+    		    <input class="form-element" type="datetime-local" name="endDate" id="endDate" value="2016-12-12T12:00">
     		  </div>
     		</div>
     		<div class="margin-top-20 text-center">
     		  <label for="description">Description: </label>
     		  <textarea class="form-element" name="desc" placeholder="Description of event" id="description">${desc}</textarea>
     		</div>
-
-    		<!--<div class="margin-top-20 text-center">-->
-    		  <!--<label for="color">Color: </label>-->
-    		  <!--<select class="form-element" name="color" id="color">-->
-    		    <!--<option value="red">Red</option>-->
-    		    <!--<option value="blue">Blue</option>-->
-    		    <!--<option value="green">Green</option>-->
-    		  <!--</select>-->
-   			<!--</div>-->
-
-		    <!--<h5>Repeat</h5>-->
-		    <!--<div class="margin-top-20">-->
-		      <!--<input class="form-element" type="radio" name="repeat" value="None" checked>None-->
-		      <!--<input class="form-element" type="radio" name="repeat" value="Weekly">Weekly-->
-		      <!--<input class="form-element" type="radio" name="repeat" value="Monthly">Monthly-->
-		    <!--</div>-->
-
-		    <!--<div class="margin-top-20">-->
-		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="sun">Sun-->
-		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="mon">Mon-->
-		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="tue">Tue-->
-		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="wed">Wed-->
-		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="thur">Thu-->
-		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="fri">Fri-->
-		      <!--<input class="form-element" type="checkbox" name="repeat_days" value="sat">Sat-->
-		    <!--</div>-->
-			<!---->
-		    <!--<div class="margin-top-20">-->
-		      <!--<h4>This event will repeat on the {date} of each month</h4>-->
-		    <!--</div>-->
-		
 		    <button type="submit">Submit</button>
-
   		</form>`);
 		$('#edit-form').submit(function (event) {
 			event.preventDefault(); //prevent default action
 			var form_data = $(this).serialize(); //Encode form elements for submission
 
-			$.ajax({//CREATE
+			$.ajax({
 				url: `events/${event_id}`,
 				method: 'patch',
 				data: form_data
 			}).done(function (res) {
-				alert(res.data.message);
-				eventData(moment(queryDate).format("YYYY-MM-DD"));
+				console.log(res);
+				refreshData();
 			}).fail(function (xhr) {
-				alert(xhr.responseJSON.data.message)
+				console.log(xhr);
+				alert(xhr.responseJSON.error.message);
 			})
 		})
 	});
-	function DateConstruct(){
-		var d = ['sun','mon','tue','wed','thu','fri','sat'];
-		var m  = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-		this.months = {
-			jan : [0,'January','Jan',31],
-			feb : [1,'February ','Feb',28,29],
-			mar : [2,'March ','Mar',31],
-			apr : [3,'April','Apr',30],
-			may : [4,'May','May',31],
-			jun : [5,'June','Jun',30],
-			jul : [6,'July','Jul',31],
-			aug : [7,'August','Aug',31],
-			sep : [8,'September','Sep',30],
-			oct : [9,'October','Oct',31],
-			nov : [10,'November','Nov',30],
-			dec : [11,'December','Dec',31]
-		};
-		this.days = {
-			sun : [0,'Sunday','sun'],
-			mon : [1,'Monday','mon'],
-			tue : [2,'Tuesday','tues'],
-			wed : [3,'Wednesday','wed'],
-			thu : [4,'Thursday','thur'],
-			fri : [5,'Friday','fri'],
-			sat : [6,'Saturday','sat']
-		};
-		this.date = new Date();
-		this.year  = this.date.getFullYear();
-		this.month = this.date.getMonth();
-		this.day   = this.date.getDate();
-		this.currdate = null;
-		this.setdate = function(yyyy,mm,dd){
-			if (arguments.length == 2){this.currdate  = new Date(yyyy,mm);}
-			else if(arguments.length === 3){this.currdate  = new Date(yyyy,mm,dd);}
-			else{this.currdate  = new Date();}
-			this.year  = this.currdate.getFullYear();
-			this.month = this.currdate.getMonth();
-			this.day   = this.currdate.getDate();
-		};
-		this.getday = function(year, month, day){
-			var getday;
-			if (arguments.length == 2){
-
-				getday = new Date(year, month).getDay();
-			}
-			if (arguments.length === 3){
-				getday = new Date(year, month, day).getDay();
-			}
-			else{
-				getday = new Date(this.year,this.month).getDay();
-			}
-			return this.days[d[getday]];
-		};
-		this.getmonth = function(year, month){
-			var mon;
-			if (arguments.length == 2){
-				mon = m[new Date(year, month).getMonth()];
-			}
-			else{
-				mon = m[this.month];
-			}
-			return this.months[mon];
-		};
-		this.ymd = function(y,m,d){
-			if(arguments.length === 0){
-				return (this.year + '-' +
-				((this.month + 1) <= 9 ? "0" + m : m) + '-' +
-				(this.day <= 9 ? "0" + d : d));
-			}
-			else{
-				return (y + '-' +
-				(m <= 9 ? "0" + m : m) + '-' +
-				(d <= 9 ? "0" + d : d));
-			}
-		};
-		this.yyyymmdd = function(date){
-			return (new Date(date)).toISOString().slice(0,10).replace(/-/g,"-")
-		};
-		this.jqformat = function(date){
-
-			var d = new Date(date);
-			return ("00" + (d.getMonth() + 1)).slice(-2) + "/" +
-				("00" + d.getDate()).slice(-2) + "/" +
-				d.getFullYear() + " " +
-				("00" + d.getHours()).slice(-2) + ":" +
-				("00" + d.getMinutes()).slice(-2) + ":" +
-				("00" + d.getSeconds()).slice(-2)
-		};
-	}//dc is a date formatting and constructing object that stores dates
 	//weekly only
 	//'<%= queryDate %>'
-	var nextWeekBtn  = document.querySelector('#nextbtn');
-	var prevWeekBtn  = document.querySelector('#prevbtn');
+	var nextWeekBtn  = $('#nextbtn');
+	var prevWeekBtn  = $('#prevbtn');
 	var weeklyEvents = [];
 	loadWeek();
 	weeklyCalendar();
 	loadEvents();
 	weekDateListeners();
-
-	nextWeekBtn.addEventListener('click',function(){
+	nextWeekBtn.on('click',function(){
 		weeklyCalendar('next');
 	});
-	prevWeekBtn.addEventListener('click',function(){
+	prevWeekBtn.on('click',function(){
 		weeklyCalendar('prev');
 	});
-
 	function loadWeek(){
 		var currDate = queryDate;
 		for (var x = 0; x < 24; x++){
@@ -368,8 +244,8 @@ $( document ).ready(function() {
 		weekDates.forEach(function(day){
 			day.addEventListener('click',function(e){
 				var _date = e.target.dataset.index;
-				getEvents.classList.add('sidebar-show');
-				overlay.classList.remove('hide');
+				getEvents.addClass('sidebar-show');
+				overlay.removeClass('hide');
 				eventData(_date)
 			});
 		});
@@ -421,6 +297,16 @@ $( document ).ready(function() {
 			var res = JSON.parse(xhr.responseText);
 			alert(res.error.message || res.error.errmsg)
 		})
+	}
+	function refreshData(){
+		$( ".week_event" ).each(function() {
+			$( this ).removeClass("week_event");
+		});
+		weeklyCalendar();
+		loadEvents();
+		getEvents.removeClass('sidebar-show');
+		createEvents.removeClass('sidebar-show');
+		overlay.addClass('hide');
 	}
 
 
